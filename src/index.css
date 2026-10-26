@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+/* Self-hosted variable fonts (OFL) — see research/DESIGN_DIRECTION.md, option A */
+@import '@fontsource-variable/unbounded';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+
+/* "Precision Noir" — research/DESIGN_DIRECTION.md §3 */
+@theme {
+  --font-display: 'Unbounded Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  /* neutrals */
+  --color-ink: #0a0a0f;
+  --color-graphite: #1a1a22;
+  --color-steel: #8a8a99;
+  --color-paper: #f5f4f0;
+
+  /* brand — violet fills; violet-glow for text/icons on dark (violet fails AA there) */
+  --color-violet: #9730f6;
+  --color-violet-glow: #b57bff;
+  --color-violet-deep: #3b1270;
+
+  /* accents, sparingly: lime = success only (dark bg only), coral = lock/error */
+  --color-lime: #c8ff4d;
+  --color-coral: #ff5a4e;
+}
+
+/* content swaps (e.g. spec chips changing act) */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* small technical labels: "01 / TAP", "8 MM · IP68" */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* big headlines */
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis drives smooth scrolling */
+}
+
+body {
+  @apply bg-ink font-sans text-paper antialiased;
+}
+
+::selection {
+  @apply bg-violet text-white;
+}
