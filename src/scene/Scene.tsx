@@ -11,7 +11,7 @@ import { EcoCard } from './EcoCard'
 import { Envelope } from './Envelope'
 import { SpecCallouts } from './SpecCallouts'
 import { Water } from './Water'
-import { Hotspots } from './Hotspots'
+import { SecuritySpots } from './SecuritySpots'
 import { RingRig } from './RingRig'
 import { anchors } from './scrollState'
 import { RingFx } from './RingFx'
@@ -57,7 +57,7 @@ export function Scene() {
           <Terminal />
           <Coins />
           <RingFx />
-          <Hotspots />
+          <SecuritySpots />
           <Envelope />
           <SpecCallouts />
           <Water />

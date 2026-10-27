@@ -73,6 +73,15 @@ export const config = { finish: '#050506', size: 9, heroFinish: '#050506' }
 export const heroFx = { tapAt: -10, x: 0, y: 0, floorY: -1 }
 /** How it works: the tip of the drawn path the ring rides, in px from the pinned frame's top-left. */
 export const howFx = { x: 0, y: 0 }
+export type PartName = 'Shell' | 'Liner' | 'Antenna' | 'SecureChip'
+/** Security: where the ring's centre and each part's callout point are on screen, in viewport px. */
+export const secFx: Record<'Center' | PartName, { x: number; y: number }> = {
+  Center: { x: 0, y: 0 },
+  Shell: { x: 0, y: 0 },
+  Liner: { x: 0, y: 0 },
+  Antenna: { x: 0, y: 0 },
+  SecureChip: { x: 0, y: 0 },
+}
 
 export type ScrollKey = keyof typeof scrollState
 
@@ -114,8 +123,6 @@ export const SEC = { explode: 0.15 } as const
 /** Active feature index at progress `p` (-1 while the ring is still coming apart). */
 export const secFeature = (p: number) =>
   p < SEC.explode ? -1 : Math.min(SECURITY.length - 1, Math.floor(((p - SEC.explode) / (1 - SEC.explode)) * SECURITY.length))
-/** Scroll progress at the middle of feature `i` (for jump links). */
-export const secFeatureMid = (i: number) => SEC.explode + ((i + 0.5) / SECURITY.length) * (1 - SEC.explode)
 
 /**
  * Tap to pay walks through PLACES (content/places.ts), one tap per place. Within each place's

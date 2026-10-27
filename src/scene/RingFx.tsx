@@ -3,7 +3,7 @@ import { Color, MathUtils, Mesh, type MeshStandardMaterial, type Object3D, type 
 import { modes } from '../content/ecosystem'
 import { anchors, config, ecoMode, MAIL, SEC, SECURITY, secFeature, scrollState, smoothstep } from './scrollState'
 
-const GLOW = new Color('#B57BFF')
+const GLOW = new Color('#9730F6')
 const CORAL = new Color('#FF5A4E')
 const COPPER = new Color('#F28C55')
 const LIME = new Color('#C8FF4D')
@@ -89,7 +89,7 @@ export function RingFx() {
           return
         }
         mat.emissive.copy(lit ? (revoke ? CORAL : GLOW) : COPPER)
-        mat.emissiveIntensity = MathUtils.damp(mat.emissiveIntensity, lit ? (revoke ? 0.18 : 0.45) : base, 8, dt)
+        mat.emissiveIntensity = MathUtils.damp(mat.emissiveIntensity, lit ? (revoke ? 0.25 : 0.55) : base, 8, dt)
       })
     }
   })

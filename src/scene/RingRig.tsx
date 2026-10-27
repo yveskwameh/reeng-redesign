@@ -173,15 +173,19 @@ export function RingRig() {
     }
     pos.y += scrollState.howExit * state.viewport.height
 
-    // security: axis tilted toward us so the exploded layers stack visibly, chip facing front
+    // security: axis tilted toward us so the exploded layers stack visibly, chip facing front.
+    // Wide screens: right of centre between the split title's words; below lg (the section's
+    // own breakpoint): left, leaving room for the callout, growing a little on tablets
     const sec = smoothstep(0.2, 1, scrollState.secEnter)
     if (sec > 0) {
-      secPos.copy(L.sec.ring)
+      const wideSec = state.size.width >= 1024
+      const { width: vw, height: vh } = state.viewport
+      secPos.set(wideSec ? vw * 0.1 : -vw * 0.2, wideSec ? -0.05 : vh * 0.11, 0)
       secPos.y += Math.sin(t * 1.1) * 0.03
-      secRot.setFromEuler(secE.set(0.62, Math.PI + Math.sin(t * 0.5) * 0.2, 0))
+      secRot.setFromEuler(secE.set(0.4, Math.PI + Math.sin(t * 0.5) * 0.2, 0))
       pos.lerp(secPos, sec)
       rot.slerp(secRot, sec)
-      scale = MathUtils.lerp(scale, L.sec.ringScale, sec)
+      scale = MathUtils.lerp(scale, wideSec ? 0.32 : Math.min(0.3, 0.22 * (state.size.width / 375)), sec)
     }
     pos.y += scrollState.secExit * state.viewport.height
 

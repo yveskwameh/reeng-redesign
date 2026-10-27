@@ -20,11 +20,6 @@ export function layout(vw: number, vh: number) {
 
     cross: wide ? crossBeside(vw) : { ring: new Vector3(0, 0.12, 0), ringScale: 0.34, exit: new Vector3(vw * 0.1, -vh * 0.3, 1.2) },
 
-    // security: exploded ring on the right (below the copy on narrow screens)
-    sec: wide
-      ? { ring: new Vector3(vw * 0.18, -0.05, 0), ringScale: 0.55 }
-      : { ring: new Vector3(0, -1.2, 0), ringScale: 0.3 },
-
     // pay by email: envelope in the middle-right, ring (the receiver) to its right
     mail: wide
       ? { envelope: new Vector3(vw * 0.13, -0.15, 0), envScale: 1, ring: new Vector3(vw * 0.13 + 1.55, 0.35, 0), ringScale: 0.3 }
