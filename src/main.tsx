@@ -21,6 +21,10 @@ const router = createBrowserRouter([
   },
   // design review pages (outside App: own nav, no main scene)
   {
+    path: 'options/security',
+    lazy: async () => ({ Component: (await import('./section-options/security/SecurityOptions.tsx')).SecurityOptions }),
+  },
+  {
     path: 'options/how-it-works',
     lazy: async () => ({ Component: (await import('./section-options/how/HowOptions.tsx')).HowOptions }),
   },

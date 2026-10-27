@@ -41,9 +41,9 @@ export function Backdrop() {
     const spec = smoothstep(0.05, 0.5, scrollState.specEnter) * (1 - smoothstep(SPEC.water - 0.08, SPEC.water, scrollState.spec))
     const eco = smoothstep(0.05, 0.5, scrollState.ecoEnter) * (1 - smoothstep(0.1, 0.6, scrollState.ecoExit))
     const paper = Math.max(spec, eco)
-    // light theme so far: hero through how it works; security is still dark, so turn as the
+    // light theme so far: hero through security; pay by email is still dark, so turn as the
     // two sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.secEnter)
+    const white = 1 - smoothstep(0.3, 0.7, scrollState.mailEnter)
     el.style.backgroundColor = `#${mixed.copy(INK).lerp(PAPER, paper).lerp(WHITE, white).getHexString()}`
   })
   return null
