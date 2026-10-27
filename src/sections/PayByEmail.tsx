@@ -33,7 +33,6 @@ export function PayByEmail() {
       <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
         <div className="mx-auto w-full max-w-6xl">
           <div className="max-w-md">
-            <p className="label-mono text-violet-glow">05 / Pay by email</p>
             <h2 className="display mt-4 text-5xl md:text-7xl">Pay by email.</h2>
             <p className="mt-5 text-lg text-steel">
               Send stablecoins to any inbox. Receive on a one-time alias that disappears after use.

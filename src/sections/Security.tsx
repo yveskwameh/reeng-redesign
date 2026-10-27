@@ -32,7 +32,6 @@ export function Security() {
       <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
         <div className="mx-auto w-full max-w-6xl">
           <div className="max-w-md">
-            <p className="label-mono text-violet-glow">04 / Security</p>
             <h2 className="display mt-4 text-5xl md:text-7xl">Locked down.</h2>
             <p className="label-mono mt-5 text-steel">Non-custodial · Export your keys anytime</p>
 

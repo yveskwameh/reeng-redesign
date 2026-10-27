@@ -41,7 +41,6 @@ export function Order() {
       <div className="sticky top-0 flex h-svh items-start px-6 pt-28 md:items-center md:pt-0">
         <div className="mx-auto w-full max-w-6xl">
           <div className="max-w-md">
-            <p className="label-mono text-violet-glow">07 / Order</p>
             <h2 className="display mt-3 text-4xl md:mt-4 md:text-6xl">Make it yours.</h2>
             <p className="mt-3 flex items-baseline gap-3 md:mt-5">
               <span className="font-display text-3xl font-bold md:text-4xl">${price.earlyBird}</span>

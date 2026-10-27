@@ -31,7 +31,6 @@ export function Ecosystem() {
       <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
         <div className="mx-auto w-full max-w-6xl">
           <div className="max-w-md">
-            <p className="label-mono text-violet">09 / Ecosystem</p>
             <h2 className="display mt-4 text-5xl md:text-7xl">One ring. More taps.</h2>
 
             <div role="tablist" aria-label="Ring modes" className="mt-8 inline-flex rounded-full border border-ink/10 bg-white/60 p-1 md:mt-10">

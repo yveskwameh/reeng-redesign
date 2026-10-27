@@ -42,7 +42,6 @@ export function Specs() {
       <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
         <div className="mx-auto w-full max-w-6xl">
           <div className="max-w-md">
-            <p className={`label-mono ${wet ? 'text-violet-glow' : 'text-violet'}`}>06 / Specs</p>
             <h2 className="display mt-4 text-5xl md:text-7xl">{wet ? 'Built for life.' : 'Built to last.'}</h2>
             <p className={`mt-5 text-lg ${wet ? 'text-steel' : 'text-ink/60'}`}>
               {wet ? 'Swim in it. Shower in it. Never charge it.' : 'Ceramic, measured to the tenth of a millimetre.'}

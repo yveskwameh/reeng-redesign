@@ -2,7 +2,7 @@ import { Vector3 } from 'three'
 
 /**
  * Where things sit, in world units, for the current viewport.
- * Wide screens put copy on the left and the terminal on the right;
+ * (The hero ring is posed in RingRig.) Wide screens put copy on the left and the terminal on the right;
  * narrow screens stack the terminal under the copy.
  */
 export function layout(vw: number, vh: number) {
@@ -10,9 +10,7 @@ export function layout(vw: number, vh: number) {
   const s = wide ? 1 : 0.72
 
   return {
-    // portrait views are narrow in world units (vertical FOV is fixed), so the hero ring shrinks
-    hero: { pos: new Vector3(0, 1.05, 0), scale: wide ? 0.6 : 0.3 },
-    terminal: { pos: new Vector3(wide ? vw * 0.2 : 0, wide ? -0.45 : -1.1, 0), scale: s },
+    terminal: { pos: new Vector3(wide ? vw * 0.2 : 0, wide ? -0.75 : -1.1, 0), scale: s * 0.9 },
     // ring scale while over the terminal; hover/touch positions come from the contactless anchor
     // ring's outer edge just clears the contactless mark
     tapScale: 0.3 * s,
@@ -20,38 +18,7 @@ export function layout(vw: number, vh: number) {
     hoverLift: 0.6 * s,
     hoverOffset: new Vector3(-0.85 * s, 0.05 * s, 0),
 
-    // cross-chain: ring stands upright as a portal; coins orbit it and stack beside it
-    cross: wide
-      ? {
-          ring: new Vector3(vw * 0.17, 0.25, 0),
-          ringScale: 0.5,
-          orbit: 1.35,
-          stack: new Vector3(vw * 0.17 + 1.15, -1.15, 0.6),
-          coinScale: 1,
-        }
-      : {
-          ring: new Vector3(0, -0.85, 0),
-          ringScale: 0.3,
-          orbit: 0.62,
-          stack: new Vector3(0.5, -1.6, 0.6),
-          coinScale: 0.7,
-        },
-
-    // how it works: phone on the right (below the copy on narrow screens), ring beside it
-    how: wide
-      ? {
-          phone: new Vector3(vw * 0.18, -0.05, 0),
-          phoneScale: 1,
-          // ring keyframes: pair (held to the phone's edge), fund (floating), tap (out front, ready)
-          ring: [new Vector3(vw * 0.18 - 0.62, 0.45, 0.25), new Vector3(vw * 0.18 - 0.95, -0.55, 0.3), new Vector3(vw * 0.18 - 1.4, -0.1, 0.5)],
-          ringScale: [0.3, 0.32, 0.36],
-        }
-      : {
-          phone: new Vector3(0.12, -1.0, 0),
-          phoneScale: 0.62,
-          ring: [new Vector3(-0.3, -0.5, 0.25), new Vector3(-0.55, -1.45, 0.3), new Vector3(-0.52, -1.5, 0.3)],
-          ringScale: [0.2, 0.2, 0.2],
-        },
+    cross: wide ? crossBeside(vw) : { ring: new Vector3(0, 0.12, 0), ringScale: 0.34, exit: new Vector3(vw * 0.1, -vh * 0.3, 1.2) },
 
     // security: exploded ring on the right (below the copy on narrow screens)
     sec: wide
@@ -83,3 +50,39 @@ export function layout(vw: number, vh: number) {
 }
 
 export type Layout = ReturnType<typeof layout>
+
+// Cross-chain copy and card, in px (they're laid out by CSS; see sections/CrossChain.tsx)
+const CONTAINER = 1280 // max-w-7xl
+const PAD = 32 // md:px-8
+const HEAD_W = 384 + 24 // max-w-sm headline column + gap
+const HEAD_BOTTOM = 400 // where the subline ends, from the top of the screen
+const CARD_W = 384 + 40 // w-96 + gap
+/** How far the faint tunnel reaches from the ring centre, per unit of ring scale. */
+const TUNNEL_REACH = 1.6
+
+/**
+ * Cross-chain on wide screens: the ring hangs face-on in a tunnel that never runs under the
+ * copy or the converter card. It goes in the gap between headline and card when that gap
+ * is roomy, otherwise in the space under the headline. Coins leave toward the card's
+ * "You hold" panel.
+ */
+function crossBeside(vw: number) {
+  const W = window.innerWidth
+  const H = window.innerHeight
+  const k = W / vw // px per world unit
+  const inset = PAD + Math.max(0, (W - CONTAINER) / 2)
+  const headR = inset + HEAD_W
+  const cardL = W - inset - CARD_W
+  const besideR = Math.min((cardL - headR) / 2, H * 0.38)
+  const below = { w: cardL - inset, h: H - HEAD_BOTTOM - 24 }
+  const useBeside = besideR >= 150
+  const reach = useBeside ? besideR : Math.min(below.w / 2, below.h * 0.45)
+  const ringScale = Math.min(0.62, reach / (TUNNEL_REACH * k))
+  const px = useBeside ? (headR + cardL) / 2 : inset + below.w / 2
+  const py = useBeside ? H / 2 : HEAD_BOTTOM + 12 + below.h / 2
+  const ring = new Vector3((px / W - 0.5) * vw, -(py / H - 0.5) * (H / k), 0)
+  // toward the "You hold" panel: card centre, a little below the middle
+  const tx = ((W - inset - CARD_W / 2) / W - 0.5) * vw
+  const ty = -(H * 0.62 / H - 0.5) * (H / k)
+  return { ring, ringScale, exit: new Vector3(tx - ring.x, ty - ring.y, 1.2) }
+}

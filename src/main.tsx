@@ -19,6 +19,20 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
+  // design review pages (outside App: own nav, no main scene)
+  {
+    path: 'options/how-it-works',
+    lazy: async () => ({ Component: (await import('./section-options/how/HowOptions.tsx')).HowOptions }),
+  },
+  {
+    path: 'options/tap-to-pay',
+    lazy: async () => ({ Component: (await import('./section-options/tap-to-pay/TapOptions.tsx')).TapOptions }),
+  },
+  {
+    path: 'options/cross-chain',
+    lazy: async () => ({ Component: (await import('./section-options/cross-chain/CrossChainOptions.tsx')).CrossChainOptions }),
+  },
+  { path: 'hero-options', lazy: async () => ({ Component: (await import('./hero-options/HeroOptions.tsx')).HeroOptions }) },
 ])
 
 createRoot(document.getElementById('root')!).render(

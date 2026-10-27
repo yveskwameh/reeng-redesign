@@ -19,7 +19,6 @@ export function Faq() {
       <script type="application/ld+json">{jsonLd}</script>
       <div className="mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-[1fr_1.6fr]">
         <div>
-          <p className="label-mono text-violet-glow">10 / FAQ</p>
           <h2 className="display mt-4 text-5xl md:text-7xl">Questions.</h2>
           <div role="tablist" aria-label="FAQ topics" className="mt-8 flex flex-wrap gap-2">
             {(['All', ...faqTopics] as const).map((t) => (
