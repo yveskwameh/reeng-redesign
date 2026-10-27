@@ -17,6 +17,11 @@
   --color-steel: #8a8a99;
   --color-paper: #f5f4f0;
 
+  /* light site: white dominates, mist for cards/stages, ash for secondary text (AA on white) */
+  --color-mist: #f1f0f4;
+  --color-line: #e3e2e8;
+  --color-ash: #5f5f6c;
+
   /* brand — violet fills; violet-glow for text/icons on dark (violet fails AA there) */
   --color-violet: #9730f6;
   --color-violet-glow: #b57bff;
@@ -56,9 +61,21 @@ html {
 }
 
 body {
-  @apply bg-ink font-sans text-paper antialiased;
+  @apply bg-white font-sans text-ink antialiased;
 }
 
 ::selection {
   @apply bg-violet text-white;
+}
+
+/* hero: contactless ripple from a tap */
+@keyframes ripple {
+  from {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(3.2);
+    opacity: 0;
+  }
 }

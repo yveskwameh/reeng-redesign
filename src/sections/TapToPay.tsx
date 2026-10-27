@@ -1,61 +1,59 @@
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
+import { PLACES } from '../content/places'
 import { trackSection } from '../lib/trackSection'
-import { TAP } from '../scene/scrollState'
-
-const steps = [
-  { n: '01', label: 'Hover', at: 0 },
-  { n: '02', label: 'Tap', at: TAP.touch },
-  { n: '03', label: 'Paid · 0.8 s', at: TAP.paid },
-]
+import { TAP, tapPlace } from '../scene/scrollState'
 
 /**
- * Pinned for three screens of scroll. The 3D scene (RingRig, Terminal) reads
- * the progress this section writes into scrollState; the copy just tracks the phase.
+ * Pinned, one stretch of scroll per place (content/places.ts). The 3D scene does the work
+ * (Terminal, RingRig, CameraRig): the ring taps, the screen approves, a receipt prints out
+ * of the terminal and tears off, and the camera eases in and out around each tap. Behind
+ * it a giant place name slides past (Scene). Here: the copy and a receipt card per place.
  */
 export function TapToPay() {
   const section = useRef<HTMLElement>(null)
-  const [phase, setPhase] = useState(0)
+  const [paid, setPaid] = useState(0)
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'tapEnter', progress: 'tap', exit: 'tapExit' }, (p) =>
-        setPhase(p >= TAP.paid ? 2 : p >= TAP.touch ? 1 : 0),
-      )
+      trackSection(section.current!, { enter: 'tapEnter', progress: 'tap', exit: 'tapExit' }, (p) => {
+        const { i, sub } = tapPlace(p)
+        setPaid(i + (sub >= TAP.paid ? 1 : 0))
+      })
     },
     { scope: section },
   )
 
   return (
-    <section ref={section} id="tap-to-pay" className="relative h-[300svh]">
-      <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
-        <div className="mx-auto w-full max-w-6xl">
+    <section ref={section} id="tap-to-pay" className="relative h-[480svh] text-ink">
+      <div className="sticky top-0 h-svh">
+        <div className="mx-auto flex h-full max-w-7xl flex-col justify-between px-5 pb-6 pt-28 md:px-8 md:pb-8">
           <div className="max-w-md">
-            <p className="label-mono text-violet-glow">01 / Tap to pay</p>
-            <h2 className="display mt-4 text-5xl md:text-7xl">
-              Tap. <span className={phase === 2 ? 'text-lime transition-colors' : 'transition-colors'}>Paid.</span>
+            <h2 className="display text-5xl md:text-7xl">
+              Tap. <span className={`transition-colors duration-300 ${paid > 0 ? 'text-violet' : ''}`}>Paid.</span>
             </h2>
-            <p className="mt-5 text-lg text-steel">Works at any contactless card terminal. No phone, no card.</p>
-
-            <ol className="mt-10 hidden gap-6 md:flex">
-              {steps.map((s, i) => (
-                <li
-                  key={s.n}
-                  className={`label-mono border-t pt-3 transition-colors duration-300 ${
-                    i === phase
-                      ? i === 2
-                        ? 'border-lime text-lime'
-                        : 'border-violet-glow text-paper'
-                      : i < phase
-                        ? 'border-white/30 text-steel'
-                        : 'border-white/10 text-steel/50'
-                  }`}
-                >
-                  {s.n} · {s.label}
-                </li>
-              ))}
-            </ol>
+            <p className="mt-5 text-lg text-ash">Anywhere contactless works. No phone, no card.</p>
           </div>
+
+          {/* one receipt card per place, landing as each tap is approved; no overflow clipping,
+              it would cut off the cards' outline and shadow (they shrink to fit instead) */}
+          <ul className="flex gap-3">
+            {PLACES.map((pl, i) => (
+              <li
+                key={pl.word}
+                className={`flex w-60 min-w-0 shrink items-center gap-3 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-line transition duration-500 max-md:[&:nth-child(n+3)]:hidden ${
+                  i < paid ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+                }`}
+              >
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-lime text-sm max-md:hidden">✓</span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{pl.merchant}</p>
+                  <p className="label-mono truncate text-ash">USDC · 0.8 s</p>
+                </div>
+                <p className="font-mono text-sm">${pl.amount.toFixed(2)}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

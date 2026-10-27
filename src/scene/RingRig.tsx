@@ -4,11 +4,21 @@ import { Euler, MathUtils, Quaternion, Vector3, type Group } from 'three'
 import { layout } from './layout'
 import { Ring } from './Ring'
 import { innerDiameter } from '../content/sizing'
-import { anchors, config, ECO_MODES, ecoMode, scrollState, smoothstep, SPEC, TAP } from './scrollState'
+import { pointer } from '../lib/pointer'
+import { anchors, config, ECO_MODES, ecoMode, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
 
 const RING_HALF_WIDTH = 0.4 // half the band width, in model units
 
 const HERO_ROT = new Quaternion().setFromEuler(new Euler(1.15, 0, -0.35))
+// hero: upright on a turntable, tipped back a touch; face-on (hole facing us) once scrolled
+const STAND = new Quaternion().setFromEuler(new Euler(Math.PI / 2 - 0.12, 0, 0))
+const FACE = new Quaternion().setFromEuler(new Euler(Math.PI / 2, 0, 0))
+const RING_RADIUS = 1.19 // outer radius in model units
+const heroPos = new Vector3()
+const heroRot = new Quaternion()
+const leanQ = new Quaternion()
+const leanE = new Euler()
+const onScreen = new Vector3()
 // at the terminal the ring lies flat on the face, circling the contactless mark
 const tapRot = new Quaternion()
 // cross-chain portal: ring axis (model Y) pointing at the camera, hole facing us
@@ -17,9 +27,6 @@ const portalPos = new Vector3()
 const portalRot = new Quaternion()
 const portalSway = new Quaternion()
 const swayE = new Euler()
-// how it works: band against the phone's edge while pairing, then a relaxed float
-const PAIR_ROT = new Quaternion().setFromEuler(new Euler(0.2, 0.3, Math.PI / 2))
-const FUND_ROT = new Quaternion().setFromEuler(new Euler(1.0, 0.2, -0.5))
 const howPos = new Vector3()
 const howRot = new Quaternion()
 const secPos = new Vector3()
@@ -87,9 +94,8 @@ export function RingRig() {
     const L = layout(state.viewport.width, state.viewport.height)
     const t = state.clock.elapsedTime
     const enter = smoothstep(0, 1, scrollState.tapEnter)
-    const p = scrollState.tap
-    // 0 → 1 while approaching the touch, back to 0 as it lifts after "paid"
-    const dip = smoothstep(0.1, TAP.touch, p) * (1 - smoothstep(TAP.paid + 0.1, 0.95, p))
+    // one tap per place: down onto the reader, paid, lift, next place
+    const dip = placeDip(tapPlace(scrollState.tap).sub)
 
     // touch = lying flat on the face around the contactless mark; hover = lifted off it
     const a = anchors.contactless
@@ -101,19 +107,44 @@ export function RingRig() {
       hover.copy(touch).addScaledVector(normal, L.hoverLift).add(L.hoverOffset)
     }
 
-    // position: hero → hover → touch
-    pos.copy(L.hero.pos).lerp(hover, enter).lerp(touch, dip)
-    pos.y += Math.sin(t * 1.2) * 0.04 * (1 - dip) // idle float
-    let scale = MathUtils.lerp(L.hero.scale, L.tapScale, enter)
-
-    // rotation: idle spin + drag in the hero, settling into the tap pose
+    // hero: floats above its shadow on a slow turntable (drag to fling it); drifts a little
+    // toward the cursor; a tap dips it to the floor. Scrolling turns it face-on and grows it
+    // around the tagline, and switches all of that off.
     const d = drag.current
     if (!d.active) d.vel *= Math.pow(0.04, dt)
     const orderOn = smoothstep(0.2, 1, scrollState.orderEnter)
     const ctaOn = smoothstep(0.15, 1, scrollState.ctaEnter)
-    d.spin += d.vel + dt * 0.35 * Math.max(1 - enter, orderOn, ctaOn)
-    spinQ.setFromAxisAngle(Y, d.spin * (1 - enter))
-    rot.copy(HERO_ROT).multiply(spinQ).slerp(tapRot, enter)
+    const hp = MathUtils.smootherstep(scrollState.hero, 0, 1)
+    const live = (1 - hp) * (1 - enter)
+    d.spin += d.vel + dt * Math.max(0.25 * live, 0.35 * Math.max(orderOn, ctaOn))
+    const fit = Math.min(1, state.viewport.aspect / 1.2) // narrow screens have less width to work with
+    // portrait: the ring belongs in the open space above the headline. Raising it in the world
+    // would put its floor at eye level (shadow seen edge-on), so the view shifts instead
+    const portrait = fit < 1
+    const baseY = portrait ? -0.3 : 0.15
+    const shift = portrait ? 0.17 * state.size.height * live : 0
+    if (shift > 0.5) state.camera.setViewOffset(state.size.width, state.size.height, 0, shift, state.size.width, state.size.height)
+    else if (state.camera.view?.enabled) state.camera.clearViewOffset()
+
+    const since = performance.now() / 1000 - heroFx.tapAt
+    const tapDip = MathUtils.smoothstep(since < 0.12 ? since / 0.12 : Math.max(0, 1 - (since - 0.12) / 0.5), 0, 1) * live
+    heroPos.set(pointer.x * 0.45 * fit * live, MathUtils.lerp(baseY, 0, hp) + Math.sin(t * 1.2) * 0.05 * live - 0.22 * tapDip, 0)
+    spinQ.setFromAxisAngle(Y, d.spin * (1 - hp))
+    leanQ.setFromEuler(leanE.set(-pointer.y * 0.1 * live + 0.25 * tapDip, 0, -pointer.x * 0.12 * live))
+    heroRot.copy(spinQ).multiply(STAND).slerp(FACE, hp).premultiply(leanQ)
+    const heroScale = MathUtils.lerp(0.6 * fit, 1.55 * Math.max(fit, 0.55), hp)
+    heroFx.floorY = baseY - (RING_RADIUS + 0.4) * heroScale
+
+    if (anchors.heroDial && live > 0.01) {
+      const deg = ((((d.spin * 180) / Math.PI) % 360) + 360) % 360
+      anchors.heroDial.textContent = `${String(Math.round(deg)).padStart(3, '0')}°`
+    }
+
+    // hero → hover over the terminal → touch its contactless mark
+    pos.copy(heroPos).lerp(hover, enter).lerp(touch, dip)
+    pos.y += Math.sin(t * 1.2) * 0.04 * enter * (1 - dip) // idle float while hovering
+    let scale = MathUtils.lerp(heroScale, L.tapScale, enter)
+    rot.copy(heroRot).slerp(tapRot, enter)
 
     // cross-chain: lift off the terminal and stand upright as the portal, swaying slightly
     const cross = smoothstep(0, 1, scrollState.crossEnter)
@@ -128,22 +159,17 @@ export function RingRig() {
     }
     pos.y += scrollState.crossExit * state.viewport.height // leave with the section
 
-    // how it works: pair (held to the phone) → fund (floating) → tap (out front, ready)
+    // how it works: ride the tip of the path the section draws, turning slowly
     const how = smoothstep(0.2, 1, scrollState.howEnter)
     if (how > 0) {
-      const H = L.how
-      const hp = scrollState.how
-      const k1 = smoothstep(0.28, 0.4, hp)
-      const k2 = smoothstep(0.61, 0.73, hp)
-      howPos.copy(H.ring[0]).lerp(H.ring[1], k1).lerp(H.ring[2], k2)
-      howPos.y += Math.sin(t * 1.2) * 0.03
-      const howScale = MathUtils.lerp(MathUtils.lerp(H.ringScale[0], H.ringScale[1], k1), H.ringScale[2], k2)
-      howRot.copy(PAIR_ROT).slerp(FUND_ROT, k1).slerp(HERO_ROT, k2)
-      spinQ.setFromAxisAngle(Y, t * 0.5 * k1) // slow turn once paired
-      howRot.multiply(spinQ)
+      const { width: vw, height: vh } = state.viewport
+      howPos.set((howFx.x / state.size.width - 0.5) * vw, -(howFx.y / state.size.height - 0.5) * vh, 0)
+      howPos.y -= (1 - scrollState.howEnter) * vh // rises in with the section
+      spinQ.setFromAxisAngle(Y, t * 0.8)
+      howRot.copy(HERO_ROT).multiply(spinQ)
       pos.lerp(howPos, how)
       rot.slerp(howRot, how)
-      scale = MathUtils.lerp(scale, howScale, how)
+      scale = MathUtils.lerp(scale, state.viewport.aspect < 1 ? 0.12 : 0.26, how)
     }
     pos.y += scrollState.howExit * state.viewport.height
 
@@ -242,6 +268,11 @@ export function RingRig() {
     g.position.lerp(pos, k)
     g.quaternion.slerp(rot, k)
     g.scale.setScalar(MathUtils.lerp(g.scale.x, scale, k))
+
+    // where the ring is on screen, so the hero's payment ripple leaves from it
+    onScreen.setFromMatrixPosition(g.matrixWorld).project(state.camera)
+    heroFx.x = ((onScreen.x + 1) / 2) * state.size.width
+    heroFx.y = ((1 - onScreen.y) / 2) * state.size.height
   })
 
   return (

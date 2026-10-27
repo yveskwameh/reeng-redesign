@@ -10,7 +10,6 @@ export function Compare() {
   return (
     <section id="compare" className="relative px-6 py-28 md:py-36">
       <div className="mx-auto w-full max-w-6xl">
-        <p className="label-mono text-violet-glow">08 / Compare</p>
         <h2 className="display mt-4 text-5xl md:text-7xl">Reeng vs. the rest.</h2>
 
         <div role="table" aria-label="Reeng compared with a bank card, a phone wallet and other smart rings" className="mt-12 md:mt-16">
