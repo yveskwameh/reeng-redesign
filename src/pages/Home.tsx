@@ -21,10 +21,10 @@ export function Home() {
       <CrossChain />
       <HowItWorks />
       <Security />
+      <PayByEmail />
 
       {/* still on the old dark theme; these move to the light theme one section at a time */}
       <div className="text-paper">
-        <PayByEmail />
         <Specs />
         <Order />
         <Compare />

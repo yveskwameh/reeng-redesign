@@ -20,10 +20,11 @@ export function layout(vw: number, vh: number) {
 
     cross: wide ? crossBeside(vw) : { ring: new Vector3(0, 0.12, 0), ringScale: 0.34, exit: new Vector3(vw * 0.1, -vh * 0.3, 1.2) },
 
-    // pay by email: envelope in the middle-right, ring (the receiver) to its right
+    // pay by email: envelope right of the address field, ring (the receiver) to its right;
+    // phones: both under the copy
     mail: wide
-      ? { envelope: new Vector3(vw * 0.13, -0.15, 0), envScale: 1, ring: new Vector3(vw * 0.13 + 1.55, 0.35, 0), ringScale: 0.3 }
-      : { envelope: new Vector3(-0.25, -1.25, 0), envScale: 0.55, ring: new Vector3(0.62, -1.2, 0), ringScale: 0.16 },
+      ? { envelope: new Vector3(vw * 0.12, -0.2, 0), envScale: 0.95, ring: new Vector3(vw * 0.12 + 1.4, 0.4, 0), ringScale: 0.3 }
+      : { envelope: new Vector3(-0.3, -1.6, 0), envScale: 0.55, ring: new Vector3(0.62, -1.45, 0), ringScale: 0.16 },
 
     // specs: big ring for the dimension callouts, then a water surface it drops through
     spec: wide
