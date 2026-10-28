@@ -21,6 +21,10 @@ const router = createBrowserRouter([
   },
   // design review pages (outside App: own nav, no main scene)
   {
+    path: 'options/pay-by-email',
+    lazy: async () => ({ Component: (await import('./section-options/email/EmailOptions.tsx')).EmailOptions }),
+  },
+  {
     path: 'options/security',
     lazy: async () => ({ Component: (await import('./section-options/security/SecurityOptions.tsx')).SecurityOptions }),
   },

@@ -1,6 +1,6 @@
 import { RoundedBox } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, type RefObject } from 'react'
 import {
   BufferAttribute,
   BufferGeometry,
@@ -37,6 +37,11 @@ const COIN_FACING = new Quaternion()
   .setFromEuler(new Euler(Math.PI / 2, 0, 0))
   .multiply(new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2))
 
+// each coin's flight: the first RISE of it straight up out of the pocket to CLEAR_Y (local),
+// just above the open flap's tip plus the coin's radius, so it never cuts through the flap
+const RISE = 0.4
+const CLEAR_Y = EH / 2 + EH * 0.58 + 0.24
+const envQ = new Quaternion()
 const from = new Vector3()
 const top = new Vector3()
 const to = new Vector3()
@@ -45,11 +50,15 @@ const p2 = new Vector3()
 
 const phase = (p: number, [a, b]: readonly [number, number]) => smoothstep(a, b, p)
 
+/** Where the envelope sits and where its coins fly to (world units), as in layout().mail. */
+export type MailPlace = { envelope: Vector3; envScale: number; ring: Vector3 }
+
 /**
  * An envelope addressed to a one-time alias: it arrives, opens, its coins fly into
  * the ring, then the alias lettering dissolves into particles and the envelope leaves.
+ * On the page it follows scrollState.mail; review pages drive it with `progress` and `place`.
  */
-export function Envelope() {
+export function Envelope({ progress, place }: { progress?: RefObject<number>; place?: RefObject<MailPlace> } = {}) {
   const root = useRef<Group>(null)
   const env = useRef<Group>(null)
   const flap = useRef<Group>(null)
@@ -103,12 +112,12 @@ export function Envelope() {
     const r = root.current
     const e = env.current
     if (!r || !e) return
-    const L = layout(state.viewport.width, state.viewport.height).mail
-    const p = scrollState.mail
-    const on = scrollState.mailEnter > 0.9 && scrollState.mailExit < 0.999
+    const L = place?.current ?? layout(state.viewport.width, state.viewport.height).mail
+    const p = progress ? progress.current : scrollState.mail
+    const on = progress ? true : scrollState.mailEnter > 0.9 && scrollState.mailExit < 0.999
     r.visible = on
     if (!on) return
-    r.position.y = scrollState.mailExit * state.viewport.height
+    r.position.y = progress ? 0 : scrollState.mailExit * state.viewport.height
 
     // arrive from the upper right, tumbling slightly; leave by sinking away
     const arrive = phase(p, MAIL.arrive)
@@ -123,23 +132,34 @@ export function Envelope() {
 
     if (flap.current) flap.current.rotation.x = Math.PI * 0.95 * phase(p, MAIL.open)
 
-    // coins: rise out of the envelope, then curve into the ring and shrink away
+    // coins: slide straight up out of the pocket, between the front and the open flap, until
+    // they clear the flap's tip; only then swing forward and curve into the ring
     const [c0, c1] = MAIL.coins
     const span = (c1 - c0) / (COINS + 1)
+    e.getWorldQuaternion(envQ)
     coins.current.forEach((c, i) => {
       if (!c) return
       const u = smoothstep(0, 1, (p - c0 - i * span) / (span * 2))
       c.visible = u > 0 && u < 1
-      from.set(0, 0, -0.03).applyMatrix4(e.matrixWorld)
-      top.set(0.1 * (i - 1), EH * 0.95, 0.1).applyMatrix4(e.matrixWorld)
-      to.copy(L.ring)
-      // quadratic bezier: inside → above the envelope → into the ring
+      const x = 0.12 * (i - 1)
       const k = Math.min(1, u * 1.15)
-      p1.lerpVectors(from, top, k)
-      p2.lerpVectors(top, to, k)
-      c.position.lerpVectors(p1, p2, k)
-      c.quaternion.copy(COIN_FACING)
-      c.scale.setScalar(L.envScale * 0.8 * smoothstep(0, 0.15, u) * (1 - smoothstep(0.8, 1, u)))
+      if (k < RISE) {
+        // in the envelope's own space, parallel to its face, so no edge pokes through
+        const r = 1 - (1 - k / RISE) ** 2
+        c.position.set(x, MathUtils.lerp(-EH * 0.1, CLEAR_Y, r), 0).applyMatrix4(e.matrixWorld)
+        c.quaternion.copy(envQ).multiply(COIN_FACING)
+      } else {
+        // quadratic bezier: above the flap → out in front → into the ring
+        const t = (k - RISE) / (1 - RISE)
+        from.set(x, CLEAR_Y, 0).applyMatrix4(e.matrixWorld)
+        top.set(x * 0.5, CLEAR_Y + 0.15, 0.5).applyMatrix4(e.matrixWorld)
+        to.copy(L.ring)
+        p1.lerpVectors(from, top, t)
+        p2.lerpVectors(top, to, t)
+        c.position.lerpVectors(p1, p2, t)
+        c.quaternion.copy(envQ).multiply(COIN_FACING).slerp(COIN_FACING, smoothstep(0, 0.4, t))
+      }
+      c.scale.setScalar(L.envScale * 0.8 * (1 - smoothstep(0.8, 1, u)))
     })
 
     // burn: swap the face to "alias burned" and let the lettering fly off as particles
@@ -174,7 +194,7 @@ export function Envelope() {
         {/* the alias lettering as particles, on the front face */}
         <points ref={points}>
           <bufferGeometry />
-          <pointsMaterial color="#B57BFF" size={0.018} sizeAttenuation transparent depthWrite={false} toneMapped={false} />
+          <pointsMaterial color="#9730F6" size={0.018} sizeAttenuation transparent depthWrite={false} toneMapped={false} />
         </points>
       </group>
 

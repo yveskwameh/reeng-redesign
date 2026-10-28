@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // let an ngrok tunnel reach the dev server for reviewing on a phone away from this network
+  server: { allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.app'] },
   // pre-bundle up front: deps discovered mid-session get a second React copy ("Invalid hook call")
   optimizeDeps: {
     include: ['gsap', 'gsap/ScrollTrigger', '@gsap/react', 'lenis', 'three', '@react-three/fiber', '@react-three/drei'],
