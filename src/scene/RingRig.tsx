@@ -5,7 +5,7 @@ import { layout } from './layout'
 import { Ring } from './Ring'
 import { innerDiameter } from '../content/sizing'
 import { pointer } from '../lib/pointer'
-import { anchors, config, ECO_MODES, ecoMode, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
+import { anchors, config, ecoLocal, ecoMode, ecoTap, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
 
 const RING_HALF_WIDTH = 0.4 // half the band width, in model units
 
@@ -247,20 +247,26 @@ export function RingRig() {
       scale = MathUtils.lerp(scale, (phone ? 0.36 : wideCard ? 0.5 : 0.42) * k * sizeFit, orderOn)
     }
 
-    // ecosystem: centred beside the mode card, a quick full turn on each mode change
+    // ecosystem: in the slot over the giant word, a full turn as each mode comes in, dipping
+    // toward the card on the tap (it follows the slot in and out, so no exit shift)
     const eco = smoothstep(0.2, 1, scrollState.ecoEnter)
-    if (eco > 0) {
-      ecoPos.copy(L.eco.ring)
-      ecoPos.y += Math.sin(t * 1.2) * 0.03
-      // the turn follows scroll progress through each mode boundary
-      const turn = smoothstep(0.42, 0.58, (scrollState.eco * ECO_MODES) % 1) + ecoMode(scrollState.eco)
+    const slot = anchors.ecoSlot
+    if (eco > 0 && slot) {
+      const r = slot.getBoundingClientRect()
+      const { width: W, height: H } = state.size
+      const tap = ecoTap(scrollState.eco)
+      const cx = r.left + r.width / 2 + 40 * tap
+      const cy = r.top + r.height / 2 + 30 * tap
+      ecoPos.set((cx / W - 0.5) * state.viewport.width, (0.5 - cy / H) * state.viewport.height + Math.sin(t * 1.2) * 0.02, 0)
+      const mode = ecoMode(scrollState.eco)
+      const turn = smoothstep(0, 0.25, ecoLocal(scrollState.eco)) + mode
       spinQ.setFromAxisAngle(Y, turn * Math.PI * 2 + t * 0.3)
       ecoRot.copy(HERO_ROT).multiply(spinQ)
       pos.lerp(ecoPos, eco)
       rot.slerp(ecoRot, eco)
-      scale = MathUtils.lerp(scale, L.eco.ringScale, eco)
+      // the ring spans 65% of the slot
+      scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 0.65 * state.viewport.height) / H / (2 * RING_RADIUS), eco)
     }
-    pos.y += scrollState.ecoExit * state.viewport.height
 
     // final call to action: flies up from below into a hero-style closing pose (draggable again)
     const cta = smoothstep(0.15, 1, scrollState.ctaEnter)

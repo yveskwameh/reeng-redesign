@@ -25,11 +25,10 @@ export function Home() {
       <Specs />
       <Order />
       <Compare />
+      <Ecosystem />
 
       {/* still on the old dark theme; these move to the light theme one section at a time */}
       <div className="text-paper">
-        <Ecosystem />
-
         <Faq />
         <FinalCta />
       </div>

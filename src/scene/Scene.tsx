@@ -2,12 +2,13 @@ import { Environment, Lightformer } from '@react-three/drei'
 import { HeroShadow } from './HeroShadow'
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
+import { wash } from '../components/ecosystem'
+import { modes } from '../content/ecosystem'
 import { PLACES } from '../content/places'
 import { Backdrop } from './Backdrop'
 import { CameraRig } from './CameraRig'
 import { CompareModels } from './CompareModels'
 import { Coins } from './Coins'
-import { EcoCard } from './EcoCard'
 import { Envelope } from './Envelope'
 import { SpecCallouts } from './SpecCallouts'
 import { Water } from './Water'
@@ -57,6 +58,24 @@ export function Scene() {
           </span>
         ))}
       </div>
+      {/* ecosystem: each mode's tint (wiped in from the right) and its giant name, one screen
+          each, sliding past behind the ring */}
+      <div ref={(el) => void (anchors.ecoBack = el)} aria-hidden className="absolute inset-x-0 top-0 h-full" style={{ visibility: 'hidden' }}>
+        {modes.map((m) => (
+          <div key={m.id} className="absolute inset-0" style={{ background: wash(m, 0.1) }} />
+        ))}
+        <div className="absolute inset-y-0 left-0 flex items-center">
+          {modes.map((m) => (
+            <span
+              key={m.id}
+              className="w-screen select-none text-center font-display font-bold leading-none"
+              style={{ fontSize: `min(30rem, ${(80 / (m.name.length * 0.9)).toFixed(1)}vw)`, letterSpacing: '-0.05em', color: wash(m, 0.16) }}
+            >
+              {m.name.toUpperCase()}
+            </span>
+          ))}
+        </div>
+      </div>
       <Canvas style={{ position: 'absolute', inset: 0 }} dpr={[1, 2]} camera={{ position: [0, 0, 7], fov: 32 }} gl={{ antialias: true }}>
         <Backdrop />
         <CameraRig />
@@ -72,7 +91,6 @@ export function Scene() {
           <SpecCallouts />
           <Water light bare flat />
           <CompareModels />
-          <EcoCard />
         </Suspense>
       </Canvas>
     </div>
