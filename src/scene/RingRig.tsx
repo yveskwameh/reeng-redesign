@@ -5,7 +5,7 @@ import { layout } from './layout'
 import { Ring } from './Ring'
 import { innerDiameter } from '../content/sizing'
 import { pointer } from '../lib/pointer'
-import { anchors, config, ecoLocal, ecoMode, ecoTap, faqTopic, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
+import { anchors, config, ecoLocal, lift, ecoMode, ecoTap, faqTopic, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
 
 const RING_HALF_WIDTH = 0.4 // half the band width, in model units
 
@@ -169,7 +169,7 @@ export function RingRig() {
       rot.slerp(portalRot, cross)
       scale = MathUtils.lerp(scale, L.cross.ringScale, cross)
     }
-    pos.y += scrollState.crossExit * state.viewport.height // leave with the section
+    pos.y += lift(scrollState.cross, scrollState.crossExit) * state.viewport.height // rise and leave with the section
 
     // how it works: ride the tip of the path the section draws, turning slowly
     const how = smoothstep(0.2, 1, scrollState.howEnter)
@@ -183,7 +183,7 @@ export function RingRig() {
       rot.slerp(howRot, how)
       scale = MathUtils.lerp(scale, state.viewport.aspect < 1 ? 0.12 : 0.26, how)
     }
-    pos.y += scrollState.howExit * state.viewport.height
+    pos.y += lift(scrollState.how, scrollState.howExit) * state.viewport.height
 
     // security: axis tilted toward us so the exploded layers stack visibly, chip facing front.
     // Wide screens: right of centre between the split title's words; below lg (the section's
@@ -199,7 +199,7 @@ export function RingRig() {
       rot.slerp(secRot, sec)
       scale = MathUtils.lerp(scale, wideSec ? 0.32 : Math.min(0.3, 0.22 * (state.size.width / 375)), sec)
     }
-    pos.y += scrollState.secExit * state.viewport.height
+    pos.y += lift(scrollState.sec, scrollState.secExit) * state.viewport.height
 
     // pay by email: reassembled, standing upright beside the envelope to receive the coins
     const mail = smoothstep(0.2, 1, scrollState.mailEnter)
@@ -211,7 +211,7 @@ export function RingRig() {
       rot.slerp(mailRot, mail)
       scale = MathUtils.lerp(scale, L.mail.ringScale, mail)
     }
-    pos.y += scrollState.mailExit * state.viewport.height
+    pos.y += lift(scrollState.mail, scrollState.mailExit) * state.viewport.height
 
     // specs: face-on (diameter, thickness) → side profile (width) → dropped through the water
     const spec = smoothstep(0.2, 1, scrollState.specEnter)
@@ -235,7 +235,7 @@ export function RingRig() {
       rot.slerp(specRot, spec)
       scale = MathUtils.lerp(scale, MathUtils.lerp(S.ringScale, S.dropScale, water), spec)
     }
-    pos.y += scrollState.specExit * state.viewport.height
+    pos.y += lift(scrollState.spec, scrollState.specExit) * state.viewport.height
 
     // order: the configurator ring — hero-style 3/4 pose you can spin, scaled to the chosen
     // size, posed over the stage card (it follows the card in and out, so no exit shift)
@@ -278,10 +278,10 @@ export function RingRig() {
       scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 0.65 * state.viewport.height) / H / (2 * RING_RADIUS), eco)
     }
 
-    // faq: in the visible slot, easing into the open topic's pose (it follows the slot in and
+    // faq: in the slot beside the title, easing into the open topic's pose (it follows the slot in and
     // out, so no exit shift)
     const faqOn = smoothstep(0.2, 1, scrollState.faqEnter)
-    const faqSlot = anchors.faqSlots.find((el) => el?.offsetWidth)
+    const faqSlot = anchors.faqSlot
     if (faqOn > 0 && faqSlot) {
       const r = faqSlot.getBoundingClientRect()
       const { width: W, height: H } = state.size

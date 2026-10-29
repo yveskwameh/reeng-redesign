@@ -47,6 +47,7 @@ const PAD = 32 // md:px-8
 const HEAD_W = 384 + 24 // max-w-sm headline column + gap
 const HEAD_BOTTOM = 400 // where the subline ends, from the top of the screen
 const CARD_W = 384 + 40 // w-96 + gap
+const CARD_HOLD = 40 + 75 // the card's bottom inset (md:bottom-10) + half its "You hold" panel
 /** How far the faint tunnel reaches from the ring centre, per unit of ring scale. */
 const TUNNEL_REACH = 1.6
 
@@ -71,8 +72,8 @@ function crossBeside(vw: number) {
   const px = useBeside ? (headR + cardL) / 2 : inset + below.w / 2
   const py = useBeside ? H / 2 : HEAD_BOTTOM + 12 + below.h / 2
   const ring = new Vector3((px / W - 0.5) * vw, -(py / H - 0.5) * (H / k), 0)
-  // toward the "You hold" panel: card centre, a little below the middle
+  // toward the "You hold" panel at the foot of the card, which sits at the bottom right
   const tx = ((W - inset - CARD_W / 2) / W - 0.5) * vw
-  const ty = -(H * 0.62 / H - 0.5) * (H / k)
+  const ty = -((H - CARD_HOLD) / H - 0.5) * (H / k)
   return { ring, ringScale, exit: new Vector3(tx - ring.x, ty - ring.y, 1.2) }
 }

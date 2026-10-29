@@ -16,7 +16,7 @@ const jsonLd = JSON.stringify({
 /**
  * Pinned, one stop per topic: scrolling steps Setup → Payments → Security → Hardware →
  * Orders. A numbered list of topics fills, each topic's first answer opens on its own, and
- * the ring (RingRig, in one of the slots) turns to the topic's pose. Tap a topic to jump to
+ * the ring (RingRig, in the slot beside the title) turns to the topic's pose. Tap a topic to jump to
  * it, or any question to open it.
  */
 export function Faq() {
@@ -26,7 +26,7 @@ export function Faq() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'faqEnter', progress: 'faq', exit: 'faqExit' }, setP)
+      trackSection(section.current!, { enter: 'faqEnter', progress: 'faq', exit: 'faqExit' }, setP, { drift: true })
     },
     { scope: section },
   )
@@ -46,14 +46,15 @@ export function Faq() {
     <section ref={section} id="faq" className="relative h-[450svh]">
       <script type="application/ld+json">{jsonLd}</script>
       <div className="sticky top-0 h-svh overflow-hidden">
-        <div className="mx-auto grid h-full max-w-6xl grid-cols-[minmax(0,1fr)] grid-rows-[auto_1fr] gap-6 px-5 pb-8 pt-24 md:grid-cols-[1fr_1.5fr] md:grid-rows-1 md:gap-16 md:px-8 md:pb-10 md:pt-28">
-          <div className="flex flex-col">
-            <div className="flex items-start justify-between gap-4">
+        <div className="mx-auto grid h-full max-w-6xl grid-cols-[minmax(0,1fr)] grid-rows-[auto_1fr] gap-6 px-5 pb-8 pt-24 md:grid-cols-[1fr_1.5fr] md:grid-rows-[auto] md:content-center md:items-start md:gap-16 md:px-8 md:pb-10 md:pt-28">
+          <div>
+            {/* the title with the ring beside it, the topics right under */}
+            <div className="flex items-center justify-between gap-4">
               <h2 className="display text-4xl text-ink md:text-6xl">Questions.</h2>
-              <div ref={(el) => void (anchors.faqSlots[0] = el)} aria-hidden className="size-20 shrink-0 md:hidden" />
+              <div ref={(el) => void (anchors.faqSlot = el)} aria-hidden className="size-20 shrink-0 md:size-32" />
             </div>
             {/* the topics, filling as you scroll */}
-            <ol aria-label="FAQ topics" className="mt-6 flex gap-1.5 overflow-x-auto [scrollbar-width:none] md:mt-10 md:block md:space-y-1 md:overflow-visible">
+            <ol aria-label="FAQ topics" className="mt-6 flex gap-1.5 overflow-x-auto [scrollbar-width:none] md:mt-8 md:block md:space-y-1 md:overflow-visible">
               {faqTopics.map((t, i) => (
                 <li key={t} className="shrink-0">
                   <button
@@ -73,9 +74,8 @@ export function Faq() {
             <div className="mt-6 h-0.5 w-full overflow-hidden rounded-full bg-mist max-md:hidden">
               <div className="h-full bg-violet" style={{ width: `${p * 100}%` }} />
             </div>
-            <div ref={(el) => void (anchors.faqSlots[1] = el)} aria-hidden className="mt-auto aspect-square w-48 max-md:hidden" />
           </div>
-          <ul key={topic} aria-label={topic} className="min-h-0 animate-[fade-up_0.4s_ease-out] self-center border-t border-line max-md:self-start">
+          <ul key={topic} aria-label={topic} className="min-h-0 animate-[fade-up_0.4s_ease-out] border-t border-line md:mt-4 md:min-h-[26rem]">
             {items.map((f) => (
               <QA key={f.q} {...f} open={open === f.q} onToggle={() => setPicked({ at, q: open === f.q ? null : f.q })} className="border-b border-line" />
             ))}

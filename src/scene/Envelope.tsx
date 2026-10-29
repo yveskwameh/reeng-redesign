@@ -19,11 +19,11 @@ import {
 import { COIN_OUT, coinEdge, coinGeometry, coinTexture } from './coinTexture'
 import { createEnvelopeFace, ENVELOPE_ASPECT } from './envelopeFace'
 import { layout } from './layout'
-import { MAIL, scrollState, smoothstep } from './scrollState'
+import { lift, MAIL, scrollState, smoothstep } from './scrollState'
 
 const EW = 1.6 // envelope width (world units at scale 1)
 const EH = EW / ENVELOPE_ASPECT
-const COINS = 3
+const COINS = 2
 
 // flap: triangle hanging down from the top edge, on the back; swings back and up to open
 const flapShape = new Shape()
@@ -117,7 +117,7 @@ export function Envelope({ progress, place }: { progress?: RefObject<number>; pl
     const on = progress ? true : scrollState.mailEnter > 0.9 && scrollState.mailExit < 0.999
     r.visible = on
     if (!on) return
-    r.position.y = progress ? 0 : scrollState.mailExit * state.viewport.height
+    r.position.y = progress ? 0 : lift(scrollState.mail, scrollState.mailExit) * state.viewport.height
 
     // arrive from the upper right, tumbling slightly; leave by sinking away
     const arrive = phase(p, MAIL.arrive)
@@ -141,7 +141,7 @@ export function Envelope({ progress, place }: { progress?: RefObject<number>; pl
       if (!c) return
       const u = smoothstep(0, 1, (p - c0 - i * span) / (span * 2))
       c.visible = u > 0 && u < 1
-      const x = 0.12 * (i - 1)
+      const x = 0.12 * (i - (COINS - 1) / 2)
       const k = Math.min(1, u * 1.15)
       if (k < RISE) {
         // in the envelope's own space, parallel to its face, so no edge pokes through

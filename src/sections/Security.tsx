@@ -25,7 +25,7 @@ export function Security() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'secEnter', progress: 'sec', exit: 'secExit' }, setP)
+      trackSection(section.current!, { enter: 'secEnter', progress: 'sec', exit: 'secExit' }, setP, { drift: true })
 
       // each callout sits to the right of the ring, level with its part (revoke: the middle)
       const place = () => {
