@@ -49,7 +49,7 @@ export function CrossChain() {
     <section ref={section} id="cross-chain" className="relative h-[220svh] text-ink">
       <div className="sticky top-0 h-svh">
         {/* headline top-left, tunnel in the middle, card bottom-right: a diagonal across the screen */}
-        <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-between gap-6 px-5 pb-6 pt-28 md:block md:px-8 md:pb-0">
+        <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-between gap-6 px-5 pb-20 pt-28 md:block md:px-8 md:pb-0">
           <div className="max-w-sm">
             <h2 className="display text-5xl md:text-6xl">
               Any coin in. <span className="text-[#2775CA]">USDC</span> out.

@@ -110,7 +110,7 @@ export function ScrollBar() {
         aria-label="Back to top"
         onClick={() => scrollToY(0)}
         tabIndex={past ? 0 : -1}
-        className={`fixed bottom-5 right-2.5 z-[70] grid size-11 cursor-pointer place-items-center rounded-full bg-ink text-white shadow-lg shadow-ink/20 transition duration-300 hover:bg-violet ${
+        className={`fixed bottom-5 right-2.5 z-[70] grid size-10 md:size-11 cursor-pointer place-items-center rounded-full bg-ink text-white shadow-lg shadow-ink/20 transition duration-300 hover:bg-violet ${
           past ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'
         }`}
       >

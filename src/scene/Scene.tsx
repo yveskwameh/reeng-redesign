@@ -1,7 +1,8 @@
 import { Environment, Lightformer, PerformanceMonitor } from '@react-three/drei'
 import { HeroShadow } from './HeroShadow'
-import { Canvas } from '@react-three/fiber'
-import { Suspense, useState } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
+import { Suspense, useEffect, useState } from 'react'
+import type { Object3D } from 'three'
 import { wash } from '../components/ecosystem'
 import { modes } from '../content/ecosystem'
 import { PLACES } from '../content/places'
@@ -98,6 +99,7 @@ export function Scene() {
           <SpecCallouts />
           <Water light bare flat />
           <CompareModels />
+          <Warmup />
         </Suspense>
       </Canvas>
     </div>
@@ -124,3 +126,28 @@ function Studio() {
     </>
   )
 }
+
+/**
+ * Prepares every material's shaders while the page loads. Most of the scene starts hidden
+ * (the terminal, coins, envelope, water...), and the GPU otherwise compiles each one the first
+ * time it appears, freezing the scroll for most of a second on a phone. Mounted inside the
+ * same Suspense as the models, so it runs once they've all loaded.
+ */
+function Warmup() {
+  const { gl, scene, camera } = useThree()
+  useEffect(() => {
+    const hidden: Object3D[] = []
+    scene.traverse((o) => {
+      if (!o.visible) {
+        hidden.push(o)
+        o.visible = true
+      }
+    })
+    // the shaders are built while compileAsync runs; each part's own frame loop sets its
+    // visibility again from the next frame, so putting them back now is only a precaution
+    void gl.compileAsync(scene, camera).catch(() => {})
+    hidden.forEach((o) => (o.visible = false))
+  }, [gl, scene, camera])
+  return null
+}
+
