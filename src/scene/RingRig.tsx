@@ -5,7 +5,7 @@ import { layout } from './layout'
 import { Ring } from './Ring'
 import { innerDiameter } from '../content/sizing'
 import { pointer } from '../lib/pointer'
-import { anchors, config, ecoLocal, ecoMode, ecoTap, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
+import { anchors, config, ecoLocal, ecoMode, ecoTap, faqTopic, heroFx, howFx, scrollState, smoothstep, SPEC, tapDip as placeDip, tapPlace } from './scrollState'
 
 const RING_HALF_WIDTH = 0.4 // half the band width, in model units
 
@@ -44,6 +44,16 @@ const orderPos = new Vector3()
 const orderRot = new Quaternion()
 const ecoPos = new Vector3()
 const ecoRot = new Quaternion()
+// faq: a pose per topic (Setup, Payments, Security, Hardware, Orders) showing what it's about
+const FAQ_POSES = [
+  HERO_ROT,
+  new Quaternion().setFromEuler(new Euler(0.45, 0, 0.1)), // lying flat, as on a terminal
+  FACE, // the hole facing you
+  new Quaternion().setFromEuler(new Euler(0, 0.6, Math.PI / 2)), // side profile, turned enough to read as a ring
+  new Quaternion().setFromEuler(new Euler(1.0, 0, 0.35)), // 3/4 from the other side
+]
+const faqPos = new Vector3()
+const faqRot = new Quaternion()
 const ctaPos = new Vector3()
 const ctaRot = new Quaternion()
 
@@ -266,6 +276,22 @@ export function RingRig() {
       rot.slerp(ecoRot, eco)
       // the ring spans 65% of the slot
       scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 0.65 * state.viewport.height) / H / (2 * RING_RADIUS), eco)
+    }
+
+    // faq: in the visible slot, easing into the open topic's pose (it follows the slot in and
+    // out, so no exit shift)
+    const faqOn = smoothstep(0.2, 1, scrollState.faqEnter)
+    const faqSlot = anchors.faqSlots.find((el) => el?.offsetWidth)
+    if (faqOn > 0 && faqSlot) {
+      const r = faqSlot.getBoundingClientRect()
+      const { width: W, height: H } = state.size
+      faqPos.set(((r.left + r.width / 2) / W - 0.5) * state.viewport.width, (0.5 - (r.top + r.height / 2) / H) * state.viewport.height + Math.sin(t * 1.2) * 0.02, 0)
+      spinQ.setFromAxisAngle(Y, t * 0.35)
+      faqRot.copy(FAQ_POSES[faqTopic(scrollState.faq)]).multiply(spinQ)
+      pos.lerp(faqPos, faqOn)
+      rot.slerp(faqRot, faqOn)
+      // the ring spans 80% of the slot
+      scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 0.8 * state.viewport.height) / H / (2 * RING_RADIUS), faqOn)
     }
 
     // final call to action: flies up from below into a hero-style closing pose (draggable again)

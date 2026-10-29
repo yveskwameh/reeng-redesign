@@ -2,11 +2,24 @@ import { ContactShadows, Environment, Lightformer } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Suspense, type ReactNode } from 'react'
 
-/** Same camera as the main scene, transparent so the page colour shows through. */
-export function Stage({ children, shadow, cameraZ = 7 }: { children: ReactNode; shadow?: { y: number; opacity?: number }; cameraZ?: number }) {
+/**
+ * Same camera as the main scene, transparent so the page colour shows through. `passive` lets
+ * clicks through to the DOM under it (R3F turns pointer events back on for its container).
+ */
+export function Stage({
+  children,
+  shadow,
+  cameraZ = 7,
+  passive = false,
+}: {
+  children: ReactNode
+  shadow?: { y: number; opacity?: number }
+  cameraZ?: number
+  passive?: boolean
+}) {
   return (
     <Canvas
-      style={{ position: 'absolute', inset: 0 }}
+      style={{ position: 'absolute', inset: 0, ...(passive && { pointerEvents: 'none' }) }}
       dpr={[1, 2]}
       camera={{ position: [0, 0, cameraZ], fov: 32 }}
       gl={{ antialias: true }}

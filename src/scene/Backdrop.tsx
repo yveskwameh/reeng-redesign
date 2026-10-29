@@ -8,7 +8,7 @@ const mixed = new Color()
 
 /**
  * Colours the canvas backdrop per section (an opaque section background would hide the
- * canvas): white for the sections already moved to the light theme (hero → ecosystem),
+ * canvas): white for the sections already moved to the light theme (hero → faq),
  * then ink for the rest of the old dark theme.
  */
 export function Backdrop() {
@@ -72,9 +72,9 @@ export function Backdrop() {
       }
       back.style.visibility = on ? '' : 'hidden'
     }
-    // light theme so far: hero through ecosystem; the faq is still on the old theme's ink,
-    // so turn as the two sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.ecoExit)
+    // light theme so far: hero through faq; the final call to action is still on the old
+    // theme's ink, so turn as the two sections pass the middle of the screen
+    const white = 1 - smoothstep(0.3, 0.7, scrollState.faqExit)
     el.style.backgroundColor = `#${mixed.copy(INK).lerp(WHITE, white).getHexString()}`
   })
   return null
