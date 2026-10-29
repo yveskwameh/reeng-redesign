@@ -216,7 +216,7 @@ export function RingRig() {
       specPos.copy(S.ring)
       if (water > 0) {
         // above the surface, then falling through it and settling below
-        dropPos.set(S.waterX, S.surface + S.lift - drop * (S.lift + S.sink) + Math.sin(t * 1.3) * 0.04 * drop, 0.2)
+        dropPos.set(S.waterX, S.surface + S.lift - drop * (S.lift + S.sink) + Math.sin(t * 1.3) * 0.04 * drop, 0)
         specPos.lerp(dropPos, water)
       }
       pos.lerp(specPos, spec)

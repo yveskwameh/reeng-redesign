@@ -95,8 +95,10 @@ export const anchors: {
   heroDial: HTMLElement | null
   heroWord: HTMLElement | null
   tapWords: HTMLElement | null
+  specWater: HTMLElement | null
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
+  specWater: null, // the specs water under the canvas, raised by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
   heroDial: null, // the hero's degree readout, written by RingRig
   compareSlots: [], // compare table header cells the small 3D models sit behind
@@ -179,6 +181,18 @@ export const SPEC = {
   impact: 0.645, // when it breaks the surface (inside `drop`)
 } as const
 export const specAct = (p: number): 'precision' | 'water' => (p >= SPEC.water - 0.02 ? 'water' : 'precision')
+/** Which view the ring is in: face-on (diameter, thickness), profile (width), or in the water. */
+export const specView = (p: number): 'front' | 'side' | 'water' =>
+  specAct(p) === 'water' ? 'water' : p >= (SPEC.front[1] + SPEC.side[0]) / 2 ? 'side' : 'front'
+/**
+ * The specs water, seen almost side-on: it rises up the screen to a waterline (a fraction of
+ * the screen's height, higher on narrow screens so the water copy fits under the ring), with
+ * a thin surface band of `band` px above its front edge where the ripples spread.
+ */
+export const SPEC_WATER = { band: 28 } as const
+export const specWaterline = () => (window.innerWidth / window.innerHeight > 1.1 ? 0.58 : 0.45) // same split as layout()
+/** 0 → 1 as the water rises to the waterline. */
+export const specRise = (p: number) => smoothstep(SPEC.water - 0.06, SPEC.drop[0], p)
 
 // dev-only handle for inspecting scene state from the browser console
 if (import.meta.env.DEV) Object.assign(window, { __reeng: { scrollState, anchors } })

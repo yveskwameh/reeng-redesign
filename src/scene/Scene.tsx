@@ -13,7 +13,7 @@ import { SpecCallouts } from './SpecCallouts'
 import { Water } from './Water'
 import { SecuritySpots } from './SecuritySpots'
 import { RingRig } from './RingRig'
-import { anchors } from './scrollState'
+import { anchors, SPEC_WATER } from './scrollState'
 import { RingFx } from './RingFx'
 import { Terminal } from './Terminal'
 
@@ -33,6 +33,14 @@ export function Scene() {
       >
         REENG
       </div>
+      {/* specs: the water behind the ring (the surface band fading back, then the body); the
+          section draws the tint in front of it */}
+      <div
+        ref={(el) => void (anchors.specWater = el)}
+        aria-hidden
+        className="absolute inset-x-0"
+        style={{ visibility: 'hidden', background: `linear-gradient(to bottom, #F4F1FF00 0, #EEEAFE ${SPEC_WATER.band}px, #DCD5FB 100%)` }}
+      />
       {/* tap to pay: one giant place name per stop, sliding past behind the terminal */}
       <div ref={(el) => void (anchors.tapWords = el)} aria-hidden className="absolute inset-y-0 left-0 flex items-center" style={{ visibility: 'hidden' }}>
         {PLACES.map((pl) => (
@@ -60,7 +68,7 @@ export function Scene() {
           <SecuritySpots />
           <Envelope />
           <SpecCallouts />
-          <Water />
+          <Water light bare flat />
           <CompareModels />
           <EcoCard />
         </Suspense>
