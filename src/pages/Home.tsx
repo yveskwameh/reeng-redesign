@@ -27,11 +27,7 @@ export function Home() {
       <Compare />
       <Ecosystem />
       <Faq />
-
-      {/* still on the old dark theme; moves to the light theme next */}
-      <div className="text-paper">
-        <FinalCta />
-      </div>
+      <FinalCta />
     </main>
   )
 }

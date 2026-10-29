@@ -109,7 +109,6 @@ export type ScrollKey = keyof typeof scrollState
 /** Scene objects other parts of the scene aim at (set by the owning component). */
 export const anchors: {
   contactless: Object3D | null
-  backdrop: HTMLDivElement | null
   ringParts: Record<string, Object3D>
   ring: Object3D | null
   compareSlots: (HTMLElement | null)[]
@@ -122,12 +121,14 @@ export const anchors: {
   ecoSlot: HTMLElement | null
   ecoBack: HTMLElement | null
   faqSlots: (HTMLElement | null)[]
+  ctaSlot: HTMLElement | null
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
   specWater: null, // the specs water under the canvas, raised by Backdrop
   orderStage: null, // the configurator's stage card (DOM), which the ring is posed over
   orderCard: null, // that card's fill under the canvas, kept on it by Backdrop
   ecoSlot: null, // ecosystem: the spot (DOM) the ring sits in
+  ctaSlot: null, // final call to action: the gap for the O of "your", which the ring fills
   faqSlots: [], // faq: the ring's spot beside the title (phones) and under the topics (wider)
   ecoBack: null, // ecosystem: the mode tints and giant words under the canvas, moved by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
@@ -135,7 +136,6 @@ export const anchors: {
   compareSlots: [], // compare table header cells the small 3D models sit behind
   ring: null, // the main ring's rig group (actual, damped pose)
   contactless: null,
-  backdrop: null, // the canvas wrapper, recoloured for paper sections
   ringParts: {}, // Shell, Liner, Antenna, SecureChip of the main ring
 }
 
