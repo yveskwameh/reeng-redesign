@@ -102,7 +102,7 @@ export function Security() {
         ))}
 
         {/* the app's security screen, bottom-left (above "down." below lg) */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-[11.5rem] md:px-8 lg:pb-8">
+        <div data-reveal className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-5 pb-[11.5rem] md:px-8 lg:pb-8">
           <p className="label-mono mb-3 text-ash">Non-custodial · Export your keys anytime</p>
           <SecurityControls p={p} compact />
         </div>

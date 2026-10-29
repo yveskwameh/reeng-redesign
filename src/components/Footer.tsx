@@ -108,7 +108,7 @@ export function Footer() {
   return (
     <footer ref={footer} className="relative z-10 bg-white p-3 md:p-5">
       <div className="mx-auto max-w-[90rem] rounded-[2rem] bg-ink px-6 py-12 text-white md:rounded-[2.5rem] md:px-14 md:py-16">
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div data-reveal className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <Logo dark className="h-9" />
             <p className="display mt-8 max-w-md text-3xl md:text-5xl">Your wallet, on your finger.</p>
@@ -117,7 +117,7 @@ export function Footer() {
             Order your Reeng
           </a>
         </div>
-        <div className="mt-12 flex flex-col gap-10 border-t border-white/10 pt-10 md:flex-row md:justify-between">
+        <div data-reveal className="mt-12 flex flex-col gap-10 border-t border-white/10 pt-10 md:flex-row md:justify-between">
           <Columns dark className="md:min-w-[32rem]" />
           <Social dark />
         </div>

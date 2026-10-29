@@ -91,3 +91,11 @@ body {
     opacity: 0;
   }
 }
+
+/* the page's own scrollbar (components/ScrollBar) replaces the native one */
+html.custom-scrollbar {
+  scrollbar-width: none;
+}
+html.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}

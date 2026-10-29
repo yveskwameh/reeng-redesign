@@ -58,7 +58,7 @@ export function CrossChain() {
           </div>
 
           {/* converter: follows the coin currently coming through the tunnel */}
-          <div className="w-full rounded-[2rem] bg-white p-2.5 shadow-xl shadow-ink/5 ring-1 ring-line md:absolute md:bottom-10 md:right-8 md:w-96 md:p-3">
+          <div data-reveal className="w-full rounded-[2rem] bg-white p-2.5 shadow-xl shadow-ink/5 ring-1 ring-line md:absolute md:bottom-10 md:right-8 md:w-96 md:p-3">
             <div className="rounded-3xl bg-mist p-4 md:p-5">
               <p className="label-mono text-ash">Someone sends you</p>
               <div className="mt-2 flex items-center justify-between gap-3">
