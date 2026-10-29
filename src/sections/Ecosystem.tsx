@@ -18,7 +18,7 @@ export function Ecosystem() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'ecoEnter', progress: 'eco', exit: 'ecoExit' }, (p) => setActive(ecoMode(p)))
+      trackSection(section.current!, { enter: 'ecoEnter', progress: 'eco', exit: 'ecoExit' }, (p) => setActive(ecoMode(p)), { drift: true })
     },
     { scope: section },
   )

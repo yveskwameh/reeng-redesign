@@ -5,7 +5,7 @@ import { trackSection } from '../lib/trackSection'
 import { TAP, tapPlace } from '../scene/scrollState'
 
 /**
- * Pinned, one stretch of scroll per place (content/places.ts). The 3D scene does the work
+ * Pinned, one stretch of scroll per place (content/places.ts; one is enough to get it across). The 3D scene does the work
  * (Terminal, RingRig, CameraRig): the ring taps, the screen approves, a receipt prints out
  * of the terminal and tears off, and the camera eases in and out around each tap. Behind
  * it a giant place name slides past (Scene). Here: the copy and a receipt card per place.
@@ -19,13 +19,13 @@ export function TapToPay() {
       trackSection(section.current!, { enter: 'tapEnter', progress: 'tap', exit: 'tapExit' }, (p) => {
         const { i, sub } = tapPlace(p)
         setPaid(i + (sub >= TAP.paid ? 1 : 0))
-      })
+      }, { drift: true })
     },
     { scope: section },
   )
 
   return (
-    <section ref={section} id="tap-to-pay" className="relative h-[480svh] text-ink">
+    <section ref={section} id="tap-to-pay" className="relative text-ink" style={{ height: `${100 + 120 * TAP.places}svh` }}>
       <div className="sticky top-0 h-svh">
         <div className="mx-auto flex h-full max-w-7xl flex-col justify-between px-5 pb-6 pt-28 md:px-8 md:pb-8">
           <div className="max-w-md">

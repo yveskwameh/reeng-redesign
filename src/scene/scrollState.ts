@@ -1,5 +1,6 @@
 import { MathUtils, type Object3D } from 'three'
 import { faqTopics } from '../content/faq'
+import { PLACES } from '../content/places'
 
 // Shared, mutable scroll progress (0–1). Sections write it from ScrollTrigger;
 // the 3D scene reads it every frame. Plain object on purpose: no React re-renders.
@@ -64,6 +65,15 @@ export const scrollState = {
   ctaExit: 0,
 }
 
+/**
+ * While a section is held, its frame drifts up by this share of the screen, so scrolling
+ * always visibly moves the page forward. Anything placed in the 3D world for that section
+ * rises by the same amount through `lift`.
+ */
+export const DRIFT = 0.025
+/** How far (in screens) a section's content has risen: the drift while held, then the exit. */
+export const lift = (progress: number, exit: number) => exit + DRIFT * progress
+
 /** Ecosystem: three equal mode segments. */
 export const ECO_MODES = 3
 export const ecoMode = (p: number) => Math.min(ECO_MODES - 1, Math.floor(p * ECO_MODES))
@@ -120,7 +130,7 @@ export const anchors: {
   orderCard: HTMLElement | null
   ecoSlot: HTMLElement | null
   ecoBack: HTMLElement | null
-  faqSlots: (HTMLElement | null)[]
+  faqSlot: HTMLElement | null
   ctaSlot: HTMLElement | null
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
@@ -129,7 +139,7 @@ export const anchors: {
   orderCard: null, // that card's fill under the canvas, kept on it by Backdrop
   ecoSlot: null, // ecosystem: the spot (DOM) the ring sits in
   ctaSlot: null, // final call to action: the gap for the O of "your", which the ring fills
-  faqSlots: [], // faq: the ring's spot beside the title (phones) and under the topics (wider)
+  faqSlot: null, // faq: the ring's spot beside the title
   ecoBack: null, // ecosystem: the mode tints and giant words under the canvas, moved by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
   heroDial: null, // the hero's degree readout, written by RingRig
@@ -162,7 +172,7 @@ export const secFeature = (p: number) =>
  * stretch of scroll (`sub`, 0–1): hover → touch at `touch` → paid at `paid` → the receipt
  * prints, then tears off before the next place.
  */
-export const TAP = { touch: 0.35, paid: 0.55, places: 4 } as const
+export const TAP = { touch: 0.35, paid: 0.55, places: PLACES.length } as const
 /** Which place (index) and how far through its tap (0–1) at section progress `p`. */
 export const tapPlace = (p: number) => {
   const seg = Math.min(p, 0.9999) * TAP.places
@@ -180,7 +190,7 @@ export const tapZoom = (sub: number) => smoothstep(0.12, 0.35, sub) * (1 - smoot
  * Cross-chain timing: coins rush out of the depth one after another, through the ring
  * (at travel 0.5) and off toward the ledger. `passed` = how far a coin must travel to count.
  */
-export const CROSS = { coins: 6, start: 0.08, stagger: 0.13, travel: 0.22, passed: 0.55 } as const
+export const CROSS = { coins: 3, start: 0.06, stagger: 0.24, travel: 0.34, passed: 0.55 } as const
 
 /** 0 → 1 as coin `i` travels depth → through the ring → off toward the ledger. */
 export const coinTravel = (i: number, p: number) =>
@@ -194,7 +204,7 @@ export const howStep = (p: number) => Math.min(HOW.steps - 1, Math.floor(p * HOW
 export const MAIL = {
   arrive: [0, 0.2],
   open: [0.22, 0.32],
-  coins: [0.34, 0.62], // three coins, staggered inside this window
+  coins: [0.34, 0.62], // the coins (Envelope COINS), staggered inside this window
   burn: [0.68, 0.9],
   leave: [0.9, 1],
   amount: 25,

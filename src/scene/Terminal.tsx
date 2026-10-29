@@ -1,12 +1,12 @@
 import { RoundedBox } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
-import { MathUtils, type Group, type Mesh, type MeshBasicMaterial, type PointLight } from 'three'
+import { CanvasTexture, MathUtils, type Group, type Mesh, type MeshBasicMaterial, type PointLight } from 'three'
 import { PLACES } from '../content/places'
 import { layout } from './layout'
 import { receiptTexture } from './receiptTexture'
 import { createScreen, type ScreenPhase } from './screenTexture'
-import { anchors, scrollState, smoothstep, TAP, tapPlace, tapPrint } from './scrollState'
+import { anchors, lift, scrollState, smoothstep, TAP, tapPlace, tapPrint } from './scrollState'
 
 const RIPPLES = 3
 const BODY = '#2B2C33'
@@ -14,6 +14,24 @@ const BODY = '#2B2C33'
 const SCREEN = { y: -0.06, w: 0.98, h: 1.59 }
 const READER_Y = SCREEN.y - SCREEN.h * 0.22
 const SLOT_Y = 1.13 // top of the printer housing, where the paper comes out
+const RECEIPT = { w: 0.86, h: 1.62 }
+
+/** A soft drop shadow for the receipt, so white paper still lifts off a white page. */
+function shadowTexture() {
+  const W = 256
+  const H = 448
+  const pad = 56
+  const c = document.createElement('canvas')
+  c.width = W
+  c.height = H
+  const ctx = c.getContext('2d')!
+  // draw the paper off-canvas and keep only its blurred shadow, offset back into view
+  ctx.shadowColor = 'rgba(10, 10, 15, 0.5)'
+  ctx.shadowBlur = 30
+  ctx.shadowOffsetX = W
+  ctx.fillRect(pad - W, pad, W - pad * 2, H - pad * 2)
+  return new CanvasTexture(c)
+}
 
 /**
  * A modern handheld card terminal (after the PAX A920 family): graphite body, a large
@@ -28,6 +46,8 @@ export function Terminal() {
   const receipt = useRef<Mesh>(null)
   const glow = useRef<PointLight>(null)
   const screen = useMemo(() => createScreen(), [])
+  const shadow = useMemo(() => shadowTexture(), [])
+  const shade = useRef<MeshBasicMaterial>(null)
   const shown = useRef('')
 
   useFrame((state, dt) => {
@@ -39,7 +59,7 @@ export function Terminal() {
     const place = PLACES[i]
     const paid = smoothstep(TAP.paid - 0.03, TAP.paid + 0.03, sub)
 
-    const exit = scrollState.tapExit * state.viewport.height
+    const exit = lift(scrollState.tap, scrollState.tapExit) * state.viewport.height
     g.visible = enter > 0.001 && scrollState.tapExit < 0.999
     g.position.set(L.terminal.pos.x, L.terminal.pos.y - (1 - enter) * 2.4 + exit, L.terminal.pos.z)
     g.scale.setScalar(L.terminal.scale)
@@ -69,7 +89,9 @@ export function Terminal() {
     // receipt: slides up out of the printer slot, then tears off and lifts away
     const r = receipt.current
     if (r) {
-      const { out, tear } = tapPrint(sub)
+      const { out, tear: off } = tapPrint(sub)
+      // the last receipt stays out instead of tearing off
+      const tear = i < TAP.places - 1 ? off : 0
       const mat = r.material as MeshBasicMaterial
       if (mat.map !== receiptTexture(place)) {
         mat.map = receiptTexture(place)
@@ -80,6 +102,7 @@ export function Terminal() {
       r.position.z = -0.12 - tear * 0.4
       r.rotation.z = tear * 0.25
       mat.opacity = 1 - tear
+      if (shade.current) shade.current.opacity = 1 - tear
       r.visible = out > 0.001 && tear < 0.999
     }
   })
@@ -116,8 +139,13 @@ export function Terminal() {
 
       {/* receipt paper (hidden inside the housing until it prints) */}
       <mesh ref={receipt} position={[0, SLOT_Y - 0.82, -0.12]} visible={false}>
-        <planeGeometry args={[0.86, 1.62]} />
+        <planeGeometry args={[RECEIPT.w, RECEIPT.h]} />
         <meshBasicMaterial transparent toneMapped={false} side={2} />
+        {/* its shadow, just behind and a touch below, sized for the texture's blur margin */}
+        <mesh position={[0.02, -0.05, -0.02]}>
+          <planeGeometry args={[RECEIPT.w * (256 / 144), RECEIPT.h * (448 / 336)]} />
+          <meshBasicMaterial ref={shade} map={shadow} transparent depthWrite={false} toneMapped={false} />
+        </mesh>
       </mesh>
 
       {/* contactless zone: the ring touches down here; ripples spread from it */}

@@ -15,7 +15,7 @@ const steps: { phase: MailPhase; label: string }[] = [
 const order: MailPhase[] = ['incoming', 'opened', 'received', 'burned']
 
 /**
- * Pinned for three screens. The 3D Envelope arrives addressed to a one-time alias, its
+ * Pinned for just over a screen. The 3D Envelope arrives addressed to a one-time alias, its
  * coins fly into the ring, then the alias dissolves. Beside it, an address field types the
  * alias as the envelope arrives, strikes it through in coral once it burns, then types a
  * fresh one for next time.
@@ -26,7 +26,7 @@ export function PayByEmail() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'mailEnter', progress: 'mail', exit: 'mailExit' }, setP)
+      trackSection(section.current!, { enter: 'mailEnter', progress: 'mail', exit: 'mailExit' }, setP, { drift: true })
     },
     { scope: section },
   )
@@ -39,7 +39,7 @@ export function PayByEmail() {
   const next = NEXT_ALIAS.slice(0, Math.round(smoothstep(MAIL.burn[1], 1, p) * NEXT_ALIAS.length))
 
   return (
-    <section ref={section} id="email" className="relative h-[300svh] text-ink">
+    <section ref={section} id="email" className="relative h-[220svh] text-ink">
       <div className="sticky top-0 h-svh overflow-hidden">
         <div className="pointer-events-none absolute inset-0 mx-auto flex max-w-7xl flex-col px-5 pt-24 md:justify-center md:px-8 md:pt-0">
           <div className="md:max-w-lg">

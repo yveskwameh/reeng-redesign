@@ -117,7 +117,7 @@ export function HowItWorks() {
         drawnRef.current = len
         setDrawn(len)
         placeTip()
-      })
+      }, { drift: true })
     },
     { scope: section },
   )

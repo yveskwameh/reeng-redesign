@@ -1,3 +1,6 @@
+import { useGSAP } from '@gsap/react'
+import { useRef } from 'react'
+import { reveal } from '../lib/reveal'
 import { Compare } from '../sections/Compare'
 import { CrossChain } from '../sections/CrossChain'
 import { Ecosystem } from '../sections/Ecosystem'
@@ -14,8 +17,17 @@ import { TapToPay } from '../sections/TapToPay'
 // Section order follows research/RESEARCH.md §4. One shared 3D ring is choreographed
 // through every section via scroll progress (see scene/scrollState.ts).
 export function Home() {
+  const main = useRef<HTMLElement>(null)
+  // every section after the hero fades and rises in as it scrolls into view
+  useGSAP(
+    () => {
+      main.current!.querySelectorAll<HTMLElement>(':scope > section:not(:first-child)').forEach(reveal)
+    },
+    { scope: main },
+  )
+
   return (
-    <main className="relative z-10">
+    <main ref={main} className="relative z-10">
       <Hero />
       <TapToPay />
       <CrossChain />

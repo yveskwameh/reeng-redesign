@@ -1,5 +1,5 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { scrollState, type ScrollKey } from '../scene/scrollState'
+import { DRIFT, scrollState, type ScrollKey } from '../scene/scrollState'
 
 type Keys = { enter?: ScrollKey; progress?: ScrollKey; exit?: ScrollKey }
 
@@ -9,8 +9,10 @@ type Keys = { enter?: ScrollKey; progress?: ScrollKey; exit?: ScrollKey }
  * - progress: while the section is pinned
  * - exit:     section bottom leaves the viewport
  * Call inside useGSAP so the triggers are cleaned up with the component.
+ * `drift`: while pinned, the section's sticky frame rises by DRIFT of the screen (see `lift`).
  */
-export function trackSection(el: HTMLElement, keys: Keys, onProgress?: (p: number) => void) {
+export function trackSection(el: HTMLElement, keys: Keys, onProgress?: (p: number) => void, { drift = false } = {}) {
+  const frame = drift ? el.querySelector<HTMLElement>(':scope > .sticky') : null
   const write = (key: ScrollKey | undefined) => (s: ScrollTrigger) => {
     if (key) scrollState[key] = s.progress
   }
@@ -21,6 +23,7 @@ export function trackSection(el: HTMLElement, keys: Keys, onProgress?: (p: numbe
     end: 'bottom bottom',
     onUpdate: (s) => {
       write(keys.progress)(s)
+      if (frame) frame.style.transform = `translateY(${-DRIFT * s.progress * window.innerHeight}px)`
       onProgress?.(s.progress)
     },
   })

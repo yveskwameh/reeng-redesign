@@ -4,7 +4,7 @@ import { Euler, MathUtils, MeshStandardMaterial, Quaternion, type Group } from '
 import { CHAINS } from '../content/chains'
 import { COIN_OUT, coinEdge as edge, coinGeometry as geometry, coinTexture } from './coinTexture'
 import { layout } from './layout'
-import { coinTravel, CROSS, scrollState, smoothstep } from './scrollState'
+import { coinTravel, CROSS, lift, scrollState, smoothstep } from './scrollState'
 
 // face the camera with the ticker upright
 const FACE_CAMERA = new Quaternion().setFromEuler(new Euler(Math.PI / 2, 0, 0)).multiply(new Quaternion().setFromEuler(new Euler(0, Math.PI / 2, 0)))
@@ -37,7 +37,7 @@ export function Coins() {
     const t = state.clock.elapsedTime
 
     r.visible = enter > 0.001 && scrollState.crossExit < 0.999
-    r.position.y = scrollState.crossExit * state.viewport.height
+    r.position.y = lift(scrollState.cross, scrollState.crossExit) * state.viewport.height
     // depth behind the ring is laid along the line of sight, so deeper things stay centred
     // on the ring on screen instead of sliding toward the middle of the screen
     const cam = state.camera.position.z

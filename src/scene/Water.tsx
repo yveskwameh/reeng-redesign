@@ -14,10 +14,12 @@ import {
   type PointsMaterial,
 } from 'three'
 import { layout } from './layout'
-import { anchors, SPEC, scrollState, smoothstep } from './scrollState'
+import { anchors, lift, SPEC, scrollState, smoothstep } from './scrollState'
 
 const RIPPLES = 4
 const DROPS = 140
+/** How far the flat-water ripples open toward the camera (radians): just enough to read as rings. */
+const RIPPLE_OPEN = 0.05
 const BUBBLES = 36
 const dummy = new Object3D()
 
@@ -84,7 +86,7 @@ export function Water({
     const water = smoothstep(SPEC.water - 0.02, SPEC.water + 0.06, p) * (progress || scrollState.specEnter > 0.95 ? 1 : 0)
     r.visible = water > 0.01 && (progress ? true : scrollState.specExit < 0.999)
     if (!r.visible) return
-    r.position.set(S.waterX, S.surface + (progress ? 0 : scrollState.specExit * state.viewport.height), 0)
+    r.position.set(S.waterX, S.surface + (progress ? 0 : lift(scrollState.spec, scrollState.specExit) * state.viewport.height), 0)
     if (surface.current) surface.current.opacity = tone.surfaceOpacity * water
     if (depth.current) depth.current.opacity = tone.depthOpacity * water
     if (line.current) line.current.opacity = 0.6 * water
@@ -93,8 +95,12 @@ export function Water({
     // going from the ring while it rests below (bubbles breaking the surface)
     const since = Math.max(0, (p - SPEC.impact) / 0.2)
     const settled = smoothstep(1.2, 1.8, since)
+    // flat water: cancel the camera's angle onto the surface, so the rings always open by the
+    // same sliver (RIPPLE_OPEN) and lie dead flat on the thin surface band
+    const view = Math.atan2(state.camera.position.y - r.position.y, state.camera.position.z - r.position.z)
     ripples.current.forEach((m, i) => {
       if (!m) return
+      if (flat) m.rotation.x = -Math.PI / 2 + RIPPLE_OPEN - view
       const splashW = since - i * 0.18
       const idleW = (t * 0.3 + i / RIPPLES) % 1
       const w = flat && settled > 0 && splashW >= 1 ? idleW : splashW
@@ -163,7 +169,7 @@ export function Water({
       </mesh>
 
       {Array.from({ length: RIPPLES }, (_, i) => (
-        <mesh key={i} ref={(m) => void (ripples.current[i] = m)} rotation={[-Math.PI / 2 + (flat ? 0.12 : 0.22), 0, 0]} position={[0, 0.005, flat ? 0 : 0.2]}>
+        <mesh key={i} ref={(m) => void (ripples.current[i] = m)} rotation={[-Math.PI / 2 + (flat ? RIPPLE_OPEN : 0.22), 0, 0]} position={[0, 0.005, flat ? 0 : 0.2]}>
           <ringGeometry args={flat ? [0.27, 0.3, 96] : [0.28, 0.3, 64]} />
           <meshBasicMaterial color={tone.accent} transparent opacity={0} toneMapped={false} depthWrite={false} />
         </mesh>

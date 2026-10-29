@@ -23,7 +23,7 @@ export function Compare() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, {}, setP)
+      trackSection(section.current!, {}, setP, { drift: true })
     },
     { scope: section },
   )

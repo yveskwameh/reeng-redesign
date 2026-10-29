@@ -37,7 +37,7 @@ export function Specs() {
 
   useGSAP(
     () => {
-      trackSection(section.current!, { enter: 'specEnter', progress: 'spec', exit: 'specExit' }, setP)
+      trackSection(section.current!, { enter: 'specEnter', progress: 'spec', exit: 'specExit' }, setP, { drift: true })
     },
     { scope: section },
   )
@@ -60,8 +60,8 @@ export function Specs() {
           </svg>
         </div>
 
-        {/* dry: the copy and the measured facts */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto max-w-7xl px-5 pt-24 md:px-8" style={{ opacity: 1 - rise * 0.5 }}>
+        {/* dry: the copy and the measured facts, centred level with the ring on wide screens */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto max-w-7xl px-5 pt-24 md:bottom-0 md:flex md:flex-col md:justify-center md:px-8 md:pt-0" style={{ opacity: 1 - rise * 0.5 }}>
           <h2 className="display text-5xl md:text-7xl">Built to last.</h2>
           <p className="mt-4 text-lg text-ash">Ceramic, measured to the tenth of a millimetre.</p>
           <dl className="mt-8 grid max-w-md grid-cols-2 gap-x-8 gap-y-5 transition-opacity duration-500 max-md:hidden" style={{ opacity: rise > 0.2 ? 0 : 1 }}>
