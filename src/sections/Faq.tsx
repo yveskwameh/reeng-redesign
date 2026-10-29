@@ -1,5 +1,10 @@
-import { useState } from 'react'
-import { faq, faqTopics, type FaqTopic } from '../content/faq'
+import { useGSAP } from '@gsap/react'
+import { useRef, useState } from 'react'
+import { QA } from '../components/faq'
+import { faq, faqTopics } from '../content/faq'
+import { trackSection } from '../lib/trackSection'
+import { scrollToY } from '../lib/useSmoothScroll'
+import { anchors, faqTopic, faqTopicMid } from '../scene/scrollState'
 
 // FAQPage structured data, so answers can show up directly in search results
 const jsonLd = JSON.stringify({
@@ -8,69 +13,74 @@ const jsonLd = JSON.stringify({
   mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 })
 
-/** The one text-heavy section: topic filters + an accordion. */
+/**
+ * Pinned, one stop per topic: scrolling steps Setup → Payments → Security → Hardware →
+ * Orders. A numbered list of topics fills, each topic's first answer opens on its own, and
+ * the ring (RingRig, in one of the slots) turns to the topic's pose. Tap a topic to jump to
+ * it, or any question to open it.
+ */
 export function Faq() {
-  const [topic, setTopic] = useState<FaqTopic | 'All'>('All')
-  const [open, setOpen] = useState<string | null>(faq[0].q)
-  const items = topic === 'All' ? faq : faq.filter((f) => f.topic === topic)
+  const section = useRef<HTMLElement>(null)
+  const [p, setP] = useState(0)
+  const [picked, setPicked] = useState<{ at: number; q: string | null } | null>(null)
+
+  useGSAP(
+    () => {
+      trackSection(section.current!, { enter: 'faqEnter', progress: 'faq', exit: 'faqExit' }, setP)
+    },
+    { scope: section },
+  )
+
+  const at = faqTopic(p)
+  const topic = faqTopics[at]
+  const items = faq.filter((f) => f.topic === topic)
+  // scrolling into a topic opens its first answer; a tap overrides that until the next topic
+  const open = picked?.at === at ? picked.q : items[0].q
+
+  const jump = (i: number) => {
+    const el = section.current
+    if (el) scrollToY(el.offsetTop + faqTopicMid(i) * (el.offsetHeight - window.innerHeight))
+  }
 
   return (
-    <section id="faq" className="relative px-6 py-28 md:py-36">
+    <section ref={section} id="faq" className="relative h-[450svh]">
       <script type="application/ld+json">{jsonLd}</script>
-      <div className="mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-[1fr_1.6fr]">
-        <div>
-          <h2 className="display mt-4 text-5xl md:text-7xl">Questions.</h2>
-          <div role="tablist" aria-label="FAQ topics" className="mt-8 flex flex-wrap gap-2">
-            {(['All', ...faqTopics] as const).map((t) => (
-              <button
-                key={t}
-                role="tab"
-                type="button"
-                aria-selected={t === topic}
-                onClick={() => setTopic(t)}
-                className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm transition ${
-                  t === topic ? 'border-violet-glow bg-violet/20 text-paper' : 'border-white/10 text-steel hover:border-white/30'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <ul role="tabpanel" className="border-t border-white/10">
-          {items.map((f) => {
-            const isOpen = open === f.q
-            const id = `faq-${faq.indexOf(f)}`
-            return (
-              <li key={f.q} className="border-b border-white/10">
-                <h3>
+      <div className="sticky top-0 h-svh overflow-hidden">
+        <div className="mx-auto grid h-full max-w-6xl grid-cols-[minmax(0,1fr)] grid-rows-[auto_1fr] gap-6 px-5 pb-8 pt-24 md:grid-cols-[1fr_1.5fr] md:grid-rows-1 md:gap-16 md:px-8 md:pb-10 md:pt-28">
+          <div className="flex flex-col">
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="display text-4xl text-ink md:text-6xl">Questions.</h2>
+              <div ref={(el) => void (anchors.faqSlots[0] = el)} aria-hidden className="size-20 shrink-0 md:hidden" />
+            </div>
+            {/* the topics, filling as you scroll */}
+            <ol aria-label="FAQ topics" className="mt-6 flex gap-1.5 overflow-x-auto [scrollbar-width:none] md:mt-10 md:block md:space-y-1 md:overflow-visible">
+              {faqTopics.map((t, i) => (
+                <li key={t} className="shrink-0">
                   <button
                     type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={id}
-                    onClick={() => setOpen(isOpen ? null : f.q)}
-                    className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left text-lg text-paper"
+                    aria-current={i === at}
+                    onClick={() => jump(i)}
+                    className={`flex cursor-pointer items-center gap-3 rounded-full transition max-md:px-3.5 max-md:py-1.5 max-md:text-sm md:py-1.5 ${
+                      i === at ? 'text-ink max-md:bg-ink max-md:text-white' : i < at ? 'text-ink max-md:bg-mist' : 'text-ash/60 max-md:bg-mist'
+                    }`}
                   >
-                    {f.q}
-                    <span
-                      aria-hidden
-                      className={`text-2xl leading-none text-violet-glow transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
-                    >
-                      +
-                    </span>
+                    <span className="label-mono w-5 max-md:hidden">{String(i + 1).padStart(2, '0')}</span>
+                    <span className={`md:font-display md:text-2xl md:font-bold ${i === at ? '' : 'md:font-normal'}`}>{t}</span>
                   </button>
-                </h3>
-                <div
-                  id={id}
-                  className={`grid transition-all duration-300 ${isOpen ? 'grid-rows-[1fr] pb-5 opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-                >
-                  <p className="overflow-hidden text-steel">{f.a}</p>
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-6 h-0.5 w-full overflow-hidden rounded-full bg-mist max-md:hidden">
+              <div className="h-full bg-violet" style={{ width: `${p * 100}%` }} />
+            </div>
+            <div ref={(el) => void (anchors.faqSlots[1] = el)} aria-hidden className="mt-auto aspect-square w-48 max-md:hidden" />
+          </div>
+          <ul key={topic} aria-label={topic} className="min-h-0 animate-[fade-up_0.4s_ease-out] self-center border-t border-line max-md:self-start">
+            {items.map((f) => (
+              <QA key={f.q} {...f} open={open === f.q} onToggle={() => setPicked({ at, q: open === f.q ? null : f.q })} className="border-b border-line" />
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   )

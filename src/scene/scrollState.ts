@@ -1,4 +1,5 @@
 import { MathUtils, type Object3D } from 'three'
+import { faqTopics } from '../content/faq'
 
 // Shared, mutable scroll progress (0–1). Sections write it from ScrollTrigger;
 // the 3D scene reads it every frame. Plain object on purpose: no React re-renders.
@@ -45,12 +46,18 @@ export const scrollState = {
   orderEnter: 0,
   /** order section unpinning */
   orderExit: 0,
-  /** compare → ecosystem: page turns to paper, ring centres for the mode switch */
+  /** compare → ecosystem: the ring settles over the first giant word */
   ecoEnter: 0,
   /** inside the pinned ecosystem section: pay → id → events */
   eco: 0,
   /** ecosystem unpinning */
   ecoExit: 0,
+  /** ecosystem → faq: the ring moves into the faq's slot */
+  faqEnter: 0,
+  /** inside the pinned faq: one stop per topic */
+  faq: 0,
+  /** faq unpinning */
+  faqExit: 0,
   /** faq → final call to action: the ring flies back in for its closing pose */
   ctaEnter: 0,
   /** final call to action scrolling off (into the footer) */
@@ -70,6 +77,11 @@ export const ecoAt = (p: number) => {
 }
 /** The ring's tap in each mode: it dips toward the card and back early in the mode. */
 export const ecoTap = (p: number) => Math.sin(Math.PI * MathUtils.clamp((ecoLocal(p) - 0.12) / 0.3, 0, 1))
+
+/** FAQ: one equal segment per topic. */
+export const FAQ_TOPICS = faqTopics.length
+export const faqTopic = (p: number) => Math.min(FAQ_TOPICS - 1, Math.floor(p * FAQ_TOPICS))
+export const faqTopicMid = (i: number) => (i + 0.5) / FAQ_TOPICS
 
 /** The configurator's current choice, mirrored here so the 3D ring can follow it. */
 export const config = { finish: '#050506', size: 9, heroFinish: '#050506' }
@@ -109,12 +121,14 @@ export const anchors: {
   orderCard: HTMLElement | null
   ecoSlot: HTMLElement | null
   ecoBack: HTMLElement | null
+  faqSlots: (HTMLElement | null)[]
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
   specWater: null, // the specs water under the canvas, raised by Backdrop
   orderStage: null, // the configurator's stage card (DOM), which the ring is posed over
   orderCard: null, // that card's fill under the canvas, kept on it by Backdrop
   ecoSlot: null, // ecosystem: the spot (DOM) the ring sits in
+  faqSlots: [], // faq: the ring's spot beside the title (phones) and under the topics (wider)
   ecoBack: null, // ecosystem: the mode tints and giant words under the canvas, moved by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
   heroDial: null, // the hero's degree readout, written by RingRig
