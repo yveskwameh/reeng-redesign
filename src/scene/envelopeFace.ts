@@ -1,11 +1,10 @@
 import { CanvasTexture, SRGBColorSpace } from 'three'
-import { MAIL } from './scrollState'
+import { ALIAS, MAIL } from './scrollState'
 
 const W = 800
 const H = 500
 export const ENVELOPE_ASPECT = W / H
 
-export const ALIAS = 'k7x2q9@reeng.xyz'
 const ALIAS_FONT = '700 46px "Unbounded Variable", sans-serif'
 const ALIAS_Y = 300
 

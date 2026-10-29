@@ -18,23 +18,6 @@ const SECTIONS = [
   ['get-reeng', 'Get Reeng'],
 ] as const
 
-/** How far down the page (0–1), the page's scrollable height and the screen's, read every frame. */
-function useScroll() {
-  const [s, set] = useState({ p: 0, y: 0, max: 1, H: 800 })
-  useEffect(() => {
-    const read = () => {
-      const H = window.innerHeight
-      const max = Math.max(1, document.documentElement.scrollHeight - H)
-      const y = window.scrollY
-      set((o) => (Math.abs(o.y - y) < 0.5 && o.max === max && o.H === H ? o : { p: Math.min(1, y / max), y, max, H }))
-    }
-    read()
-    gsap.ticker.add(read)
-    return () => gsap.ticker.remove(read)
-  }, [])
-  return s
-}
-
 /** Where each section starts, as a share of the scrollable height (home page only). */
 function useMarks(max: number) {
   const [marks, setMarks] = useState<{ id: string; label: string; at: number }[]>([])
@@ -56,11 +39,31 @@ function useMarks(max: number) {
  * glides back to the top.
  */
 export function ScrollBar() {
-  const { p, y, max, H } = useScroll()
-  const marks = useMarks(max)
   const track = useRef<HTMLDivElement>(null)
+  const fill = useRef<HTMLDivElement>(null)
+  const dot = useRef<HTMLDivElement>(null)
   const drag = useRef<{ y: number; scroll: number } | null>(null)
-  const past = y > H * 0.8
+  // React only hears about the rare changes (page height, crossing the first screen);
+  // the fill and dot follow scroll every frame by writing their styles directly
+  const [max, setMax] = useState(1)
+  const [past, setPast] = useState(false)
+  const marks = useMarks(max)
+
+  useEffect(() => {
+    const read = () => {
+      const H = window.innerHeight
+      const m = Math.max(1, document.documentElement.scrollHeight - H)
+      const y = window.scrollY
+      const at = `${Math.min(1, y / m) * 100}%`
+      if (fill.current) fill.current.style.height = at
+      if (dot.current) dot.current.style.top = at
+      setMax((o) => (o === m ? o : m))
+      setPast(y > H * 0.8)
+    }
+    read()
+    gsap.ticker.add(read)
+    return () => gsap.ticker.remove(read)
+  }, [])
 
   useEffect(() => {
     document.documentElement.classList.add('custom-scrollbar')
@@ -75,9 +78,10 @@ export function ScrollBar() {
 
   return (
     <>
-      <div ref={track} onPointerDown={jump} className="fixed bottom-20 right-1.5 top-24 z-[70] w-4 cursor-pointer">
+      {/* only when there's somewhere to scroll */}
+      <div ref={track} onPointerDown={jump} className={`fixed bottom-20 right-1.5 top-24 z-[70] w-4 cursor-pointer ${max > 40 ? '' : 'hidden'}`}>
         <div className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-line" />
-        <div className="absolute left-1/2 top-0 w-0.5 -translate-x-1/2 rounded-full bg-violet" style={{ height: `${p * 100}%` }} />
+        <div ref={fill} className="absolute left-1/2 top-0 w-0.5 -translate-x-1/2 rounded-full bg-violet" />
         {marks.map((m) => (
           <span key={m.id} title={m.label} className="absolute left-1/2 h-0.5 w-2 -translate-x-1/2 rounded-full bg-ink/25" style={{ top: `${m.at * 100}%` }} />
         ))}
@@ -97,7 +101,7 @@ export function ScrollBar() {
           }}
           onPointerUp={() => void (drag.current = null)}
           className="absolute left-1/2 size-3 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full bg-violet ring-4 ring-violet/15 active:cursor-grabbing"
-          style={{ top: `${p * 100}%` }}
+          ref={dot}
         />
       </div>
 

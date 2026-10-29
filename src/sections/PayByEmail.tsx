@@ -1,8 +1,7 @@
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
 import { trackSection } from '../lib/trackSection'
-import { ALIAS } from '../scene/envelopeFace'
-import { MAIL, mailPhase, smoothstep, type MailPhase } from '../scene/scrollState'
+import { ALIAS, MAIL, mailPhase, smoothstep, type MailPhase } from '../scene/scrollState'
 
 // the alias that replaces the burned one, typed in at the end
 const NEXT_ALIAS = 'm3p8v1@reeng.xyz'

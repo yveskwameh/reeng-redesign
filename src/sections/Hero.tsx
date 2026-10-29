@@ -1,9 +1,8 @@
 import { useGSAP } from '@gsap/react'
 import { useEffect, useRef, useState } from 'react'
-import { MathUtils } from 'three'
 import { product } from '../content/product'
 import { trackSection } from '../lib/trackSection'
-import { anchors, config, heroFx, scrollState } from '../scene/scrollState'
+import { anchors, config, heroFx, scrollState, smoothstep } from '../scene/scrollState'
 
 const MERCHANTS = [
   ['Blue Bottle', 4.2],
@@ -17,7 +16,7 @@ type Receipt = { id: number; name: string; amount: number; total: number }
 type Ripple = { id: number; x: number; y: number }
 
 /**
- * Hero (option E of /hero-options). A giant pale wordmark (Scene) behind the floating ring
+ * Hero. A giant pale wordmark (Scene) behind the floating ring
  * (RingRig `hero`), headline and actions along the bottom. The ring turns on its own;
  * a drag spins it, a click pays: it dips to its shadow, a ripple leaves it and one
  * receipt shows under the dial. Scrolling turns it face-on around the tagline.
@@ -40,9 +39,9 @@ export function Hero() {
   useGSAP(
     () => {
       const onProgress = (p: number) => {
-        if (inner.current) inner.current.style.opacity = `${MathUtils.smoothstep(p, 0.6, 1)}`
+        if (inner.current) inner.current.style.opacity = `${smoothstep(0.6, 1, p)}`
         if (chrome.current) {
-          chrome.current.style.opacity = `${1 - MathUtils.smoothstep(p, 0, 0.35)}`
+          chrome.current.style.opacity = `${1 - smoothstep(0, 0.35, p)}`
           chrome.current.style.visibility = p > 0.4 ? 'hidden' : ''
         }
       }

@@ -1,7 +1,7 @@
-import { Environment, Lightformer } from '@react-three/drei'
+import { Environment, Lightformer, PerformanceMonitor } from '@react-three/drei'
 import { HeroShadow } from './HeroShadow'
 import { Canvas } from '@react-three/fiber'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { wash } from '../components/ecosystem'
 import { modes } from '../content/ecosystem'
 import { PLACES } from '../content/places'
@@ -14,6 +14,7 @@ import { SpecCallouts } from './SpecCallouts'
 import { Water } from './Water'
 import { SecuritySpots } from './SecuritySpots'
 import { RingRig } from './RingRig'
+import { ANTIALIAS, DPR_MAX, DPR_MIN, LOW_END } from './quality'
 import { anchors, SPEC_WATER } from './scrollState'
 import { RingFx } from './RingFx'
 import { Terminal } from './Terminal'
@@ -23,6 +24,8 @@ import { Terminal } from './Terminal'
  * through scroll (see scrollState.ts) rather than mounting their own canvases.
  */
 export function Scene() {
+  // resolution follows the frame rate: down when frames drop, back up when there's headroom
+  const [dpr, setDpr] = useState(LOW_END ? DPR_MIN : DPR_MAX)
   return (
     <div className="pointer-events-none fixed inset-0 z-0 bg-white">
       {/* hero wordmark: under the transparent canvas so the ring floats in front of it */}
@@ -76,7 +79,11 @@ export function Scene() {
           ))}
         </div>
       </div>
-      <Canvas style={{ position: 'absolute', inset: 0 }} dpr={[1, 2]} camera={{ position: [0, 0, 7], fov: 32 }} gl={{ antialias: true }}>
+      <Canvas style={{ position: 'absolute', inset: 0 }} dpr={dpr} camera={{ position: [0, 0, 7], fov: 32 }} gl={{ antialias: ANTIALIAS }}>
+        <PerformanceMonitor
+          factor={LOW_END ? 0 : 1}
+          onChange={({ factor }) => setDpr(Math.round((DPR_MIN + (DPR_MAX - DPR_MIN) * factor) * 4) / 4)}
+        />
         <Backdrop />
         <CameraRig />
         <Suspense fallback={null}>

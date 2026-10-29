@@ -181,7 +181,8 @@ export function Water({
 
       <instancedMesh ref={bubbles} args={[undefined, undefined, BUBBLES]}>
         <sphereGeometry args={[1, 12, 12]} />
-        <meshPhysicalMaterial color={tone.drop} roughness={0} transmission={0.6} transparent opacity={0.7} />
+        {/* plain translucent, not transmission: that would render the whole scene a second time each frame */}
+        <meshStandardMaterial color={tone.drop} roughness={0.1} metalness={0.1} transparent opacity={0.55} />
       </instancedMesh>
     </group>
   )

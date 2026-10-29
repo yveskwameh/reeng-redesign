@@ -1,9 +1,8 @@
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
-import { MathUtils } from 'three'
 import { compareColumns, compareRows, type Mark } from '../content/compare'
 import { trackSection } from '../lib/trackSection'
-import { anchors } from '../scene/scrollState'
+import { anchors, clamp01, smoothstep } from '../scene/scrollState'
 
 const ROWS = compareRows.length
 // a bar's height at zero points: room for its score and the current mark
@@ -29,9 +28,9 @@ export function Compare() {
   )
 
   // features counted so far, continuous: each feature adds its points as it's reached
-  const f = MathUtils.smoothstep(p, 0.02, 0.92) * ROWS
+  const f = smoothstep(0.02, 0.92, p) * ROWS
   const at = Math.min(ROWS - 1, Math.floor(f))
-  const tally = (i: number) => compareRows.reduce((s, r, ri) => s + score(r.marks[i]) * MathUtils.clamp(f - ri, 0, 1), 0)
+  const tally = (i: number) => compareRows.reduce((s, r, ri) => s + score(r.marks[i]) * clamp01(f - ri), 0)
 
   return (
     <section ref={section} id="compare" className="relative h-[320svh]">

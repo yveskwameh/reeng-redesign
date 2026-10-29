@@ -1,4 +1,4 @@
-import { MathUtils, type Object3D } from 'three'
+import type { Object3D } from 'three'
 import { faqTopics } from '../content/faq'
 import { PLACES } from '../content/places'
 
@@ -79,14 +79,14 @@ export const ECO_MODES = 3
 export const ecoMode = (p: number) => Math.min(ECO_MODES - 1, Math.floor(p * ECO_MODES))
 export const ecoModeMid = (i: number) => (i + 0.5) / ECO_MODES
 /** How far through the current mode (0–1). */
-export const ecoLocal = (p: number) => MathUtils.clamp(p * ECO_MODES - ecoMode(p), 0, 1)
+export const ecoLocal = (p: number) => clamp01(p * ECO_MODES - ecoMode(p))
 /** Where the giant words and the tint wipe are, continuous: they move on at the end of each mode. */
 export const ecoAt = (p: number) => {
   const i = ecoMode(p)
   return i + (i < ECO_MODES - 1 ? smoothstep(0.8, 1, ecoLocal(p)) : 0)
 }
 /** The ring's tap in each mode: it dips toward the card and back early in the mode. */
-export const ecoTap = (p: number) => Math.sin(Math.PI * MathUtils.clamp((ecoLocal(p) - 0.12) / 0.3, 0, 1))
+export const ecoTap = (p: number) => Math.sin(Math.PI * clamp01((ecoLocal(p) - 0.12) / 0.3))
 
 /** FAQ: one equal segment per topic. */
 export const FAQ_TOPICS = faqTopics.length
@@ -209,6 +209,8 @@ export const MAIL = {
   leave: [0.9, 1],
   amount: 25,
 } as const
+/** The one-time alias the envelope is addressed to (shared by the 3D envelope and the page). */
+export const ALIAS = 'k7x2q9@reeng.xyz'
 export type MailPhase = 'incoming' | 'opened' | 'received' | 'burned'
 export const mailPhase = (p: number): MailPhase =>
   p >= MAIL.burn[0] ? 'burned' : p >= MAIL.coins[1] - 0.04 ? 'received' : p >= MAIL.open[0] ? 'opened' : 'incoming'
@@ -237,6 +239,9 @@ export const specRise = (p: number) => smoothstep(SPEC.water - 0.06, SPEC.drop[0
 
 // dev-only handle for inspecting scene state from the browser console
 if (import.meta.env.DEV) Object.assign(window, { __reeng: { scrollState, anchors } })
+
+/** Clamp to 0–1. */
+export const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 
 export const smoothstep = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)))
