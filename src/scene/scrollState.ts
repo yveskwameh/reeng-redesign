@@ -96,9 +96,13 @@ export const anchors: {
   heroWord: HTMLElement | null
   tapWords: HTMLElement | null
   specWater: HTMLElement | null
+  orderStage: HTMLElement | null
+  orderCard: HTMLElement | null
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
   specWater: null, // the specs water under the canvas, raised by Backdrop
+  orderStage: null, // the configurator's stage card (DOM), which the ring is posed over
+  orderCard: null, // that card's fill under the canvas, kept on it by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
   heroDial: null, // the hero's degree readout, written by RingRig
   compareSlots: [], // compare table header cells the small 3D models sit behind

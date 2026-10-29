@@ -41,6 +41,8 @@ export function Scene() {
         className="absolute inset-x-0"
         style={{ visibility: 'hidden', background: `linear-gradient(to bottom, #F4F1FF00 0, #EEEAFE ${SPEC_WATER.band}px, #DCD5FB 100%)` }}
       />
+      {/* order: the stage card's fill, under the ring */}
+      <div ref={(el) => void (anchors.orderCard = el)} aria-hidden className="absolute rounded-3xl bg-mist" style={{ visibility: 'hidden' }} />
       {/* tap to pay: one giant place name per stop, sliding past behind the terminal */}
       <div ref={(el) => void (anchors.tapWords = el)} aria-hidden className="absolute inset-y-0 left-0 flex items-center" style={{ visibility: 'hidden' }}>
         {PLACES.map((pl) => (

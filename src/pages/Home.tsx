@@ -23,10 +23,10 @@ export function Home() {
       <Security />
       <PayByEmail />
       <Specs />
+      <Order />
 
       {/* still on the old dark theme; these move to the light theme one section at a time */}
       <div className="text-paper">
-        <Order />
         <Compare />
         <Ecosystem />
 

@@ -37,8 +37,6 @@ export function layout(vw: number, vh: number) {
           { ring: new Vector3(0, -0.6, 0), ringScale: 0.3, dropScale: 0.22, waterX: 0, lift: 0.6, sink: 0.35, leader: false }),
     },
 
-    // order: configurator ring on the right; on narrow screens it sits in a gap under the heading
-    order: wide ? { ring: new Vector3(vw * 0.18, 0.05, 0), ringScale: 0.62 } : { ring: new Vector3(0, 0.25, 0), ringScale: 0.3 },
 
     // ecosystem: ring + the card showing what a tap opens, side by side
     eco: wide

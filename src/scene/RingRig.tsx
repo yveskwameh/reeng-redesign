@@ -68,6 +68,8 @@ export function RingRig() {
       const inOrder = scrollState.orderEnter > 0.95 && scrollState.orderExit < 0.05
       const inCta = scrollState.ctaEnter > 0.95 && scrollState.ctaExit < 0.3
       if (scrollState.tapEnter > 0.05 && !inOrder && !inCta) return
+      // in the configurator, only over the stage card
+      if (inOrder && !anchors.orderStage?.contains(e.target as Node)) return
       if ((e.target as HTMLElement).closest('a,button,input,label,[role=dialog]')) return
       d.active = true
       d.lastX = e.clientX
@@ -225,19 +227,25 @@ export function RingRig() {
     }
     pos.y += scrollState.specExit * state.viewport.height
 
-    // order: the configurator ring — hero-style 3/4 pose you can spin, scaled to the chosen size
-    if (orderOn > 0) {
-      orderPos.copy(L.order.ring)
-      orderPos.y += Math.sin(t * 1.2) * 0.03
+    // order: the configurator ring — hero-style 3/4 pose you can spin, scaled to the chosen
+    // size, posed over the stage card (it follows the card in and out, so no exit shift)
+    const stage = anchors.orderStage
+    if (orderOn > 0 && stage) {
+      const r = stage.getBoundingClientRect()
+      const { width: W, height: H } = state.size
+      const k = r.height / H // the card's share of the screen: sizes below are card-relative
+      const wideCard = r.width > r.height
+      const phone = state.viewport.aspect < 1 // a short card between the title and the pill
+      orderPos.set(((r.left + r.width / 2) / W - 0.5) * state.viewport.width, (0.5 - (r.top + r.height / 2) / H) * state.viewport.height, 0)
+      orderPos.y += ((phone ? -0.04 : wideCard ? -0.1 : -0.15) + Math.sin(t * 1.2) * 0.03) * k
       spinQ.setFromAxisAngle(Y, d.spin)
       orderRot.copy(HERO_ROT).multiply(spinQ)
       pos.lerp(orderPos, orderOn)
       rot.slerp(orderRot, orderOn)
       // true-to-scale between sizes, relative to the US 9 the scene is modelled at
       const sizeFit = innerDiameter(config.size) / innerDiameter(9)
-      scale = MathUtils.lerp(scale, L.order.ringScale * sizeFit, orderOn)
+      scale = MathUtils.lerp(scale, (phone ? 0.36 : wideCard ? 0.5 : 0.42) * k * sizeFit, orderOn)
     }
-    pos.y += scrollState.orderExit * state.viewport.height
 
     // ecosystem: centred beside the mode card, a quick full turn on each mode change
     const eco = smoothstep(0.2, 1, scrollState.ecoEnter)
