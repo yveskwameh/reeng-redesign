@@ -2,6 +2,7 @@ import { ContactShadows } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef, useState } from 'react'
 import type { Group } from 'three'
+import { SHADOW_RES } from './quality'
 import { anchors, heroFx, scrollState } from './scrollState'
 
 /**
@@ -23,5 +24,5 @@ export function HeroShadow() {
     g.scale.setScalar(ring.scale.x / 0.6)
   })
 
-  return <group ref={ref}>{on && <ContactShadows opacity={0.5} scale={5} blur={2.4} far={2.5} resolution={512} />}</group>
+  return <group ref={ref}>{on && <ContactShadows opacity={0.5} scale={5} blur={2.4} far={2.5} resolution={SHADOW_RES} />}</group>
 }

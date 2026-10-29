@@ -1,10 +1,9 @@
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef, useState } from 'react'
-import { MathUtils } from 'three'
 import { product } from '../content/product'
 import { trackSection } from '../lib/trackSection'
-import { anchors } from '../scene/scrollState'
+import { anchors, smoothstep } from '../scene/scrollState'
 
 // the facts that close the sale, balancing the headline on the right
 const FACTS = ['Never charges', product.specs.water, 'Non-custodial', `${product.specs.warrantyYears}-year warranty`]
@@ -29,7 +28,7 @@ export function FinalCta() {
     },
     { scope: section },
   )
-  const ss = (a: number, b: number) => MathUtils.smoothstep(e, a, b)
+  const ss = (a: number, b: number) => smoothstep(a, b, e)
   const text = ss(0.65, 1)
 
   return (

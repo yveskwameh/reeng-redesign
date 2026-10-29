@@ -19,56 +19,6 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFound /> },
     ],
   },
-  // design review pages (outside App: own nav, no main scene)
-  {
-    path: 'options/order',
-    lazy: async () => ({ Component: (await import('./section-options/order/OrderOptions.tsx')).OrderOptions }),
-  },
-  {
-    path: 'options/compare',
-    lazy: async () => ({ Component: (await import('./section-options/compare/CompareOptions.tsx')).CompareOptions }),
-  },
-  {
-    path: 'options/footer',
-    lazy: async () => ({ Component: (await import('./section-options/footer/FooterOptions.tsx')).FooterOptions }),
-  },
-  {
-    path: 'options/cta',
-    lazy: async () => ({ Component: (await import('./section-options/cta/CtaOptions.tsx')).CtaOptions }),
-  },
-  {
-    path: 'options/faq',
-    lazy: async () => ({ Component: (await import('./section-options/faq/FaqOptions.tsx')).FaqOptions }),
-  },
-  {
-    path: 'options/ecosystem',
-    lazy: async () => ({ Component: (await import('./section-options/ecosystem/EcosystemOptions.tsx')).EcosystemOptions }),
-  },
-  {
-    path: 'options/specs',
-    lazy: async () => ({ Component: (await import('./section-options/specs/SpecsOptions.tsx')).SpecsOptions }),
-  },
-  {
-    path: 'options/pay-by-email',
-    lazy: async () => ({ Component: (await import('./section-options/email/EmailOptions.tsx')).EmailOptions }),
-  },
-  {
-    path: 'options/security',
-    lazy: async () => ({ Component: (await import('./section-options/security/SecurityOptions.tsx')).SecurityOptions }),
-  },
-  {
-    path: 'options/how-it-works',
-    lazy: async () => ({ Component: (await import('./section-options/how/HowOptions.tsx')).HowOptions }),
-  },
-  {
-    path: 'options/tap-to-pay',
-    lazy: async () => ({ Component: (await import('./section-options/tap-to-pay/TapOptions.tsx')).TapOptions }),
-  },
-  {
-    path: 'options/cross-chain',
-    lazy: async () => ({ Component: (await import('./section-options/cross-chain/CrossChainOptions.tsx')).CrossChainOptions }),
-  },
-  { path: 'hero-options', lazy: async () => ({ Component: (await import('./hero-options/HeroOptions.tsx')).HeroOptions }) },
 ])
 
 createRoot(document.getElementById('root')!).render(
