@@ -38,11 +38,6 @@ export function layout(vw: number, vh: number) {
     },
 
 
-    // ecosystem: ring + the card showing what a tap opens, side by side
-    eco: wide
-      ? { ring: new Vector3(vw * 0.1, 0.05, 0), ringScale: 0.45, card: new Vector3(vw * 0.1 + 1.45, 0, 0.2), cardScale: 1 }
-      : { ring: new Vector3(-0.45, -1.15, 0), ringScale: 0.24, card: new Vector3(0.38, -1.15, 0.2), cardScale: 0.55 },
-
     // final call to action: the ring back centre stage, above the closing headline
     cta: { ring: new Vector3(0, wide ? 1.05 : 1.0, 0), ringScale: wide ? 0.58 : 0.34 },
   }

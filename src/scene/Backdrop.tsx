@@ -1,17 +1,15 @@
 import { useFrame } from '@react-three/fiber'
 import { Color } from 'three'
-import { anchors, SPEC, SPEC_WATER, scrollState, smoothstep, specRise, specWaterline, TAP, tapPlace } from './scrollState'
+import { anchors, ecoAt, SPEC, SPEC_WATER, scrollState, smoothstep, specRise, specWaterline, TAP, tapPlace } from './scrollState'
 
 const INK = new Color('#0A0A0F')
-const PAPER = new Color('#F5F4F0')
 const WHITE = new Color('#FFFFFF')
 const mixed = new Color()
 
 /**
  * Colours the canvas backdrop per section (an opaque section background would hide the
- * canvas): white for the sections already moved to the light theme (hero → cross-chain),
- * then ink, with paper for the light sections of the old dark theme.
- * Paper starts early in each enter, before the section's dark headline scrolls into view.
+ * canvas): white for the sections already moved to the light theme (hero → ecosystem),
+ * then ink for the rest of the old dark theme.
  */
 export function Backdrop() {
   useFrame(() => {
@@ -58,12 +56,26 @@ export function Backdrop() {
       }
       card.style.visibility = on ? '' : 'hidden'
     }
-    const eco = smoothstep(0.05, 0.5, scrollState.ecoEnter) * (1 - smoothstep(0.1, 0.6, scrollState.ecoExit))
-    const paper = eco
-    // light theme so far: hero through compare; ecosystem is still on the old theme's paper,
+    // ecosystem: the tints and words come in with the section and leave upward with it; inside,
+    // the next mode's tint wipes in from the right as its word slides over
+    const back = anchors.ecoBack
+    if (back) {
+      const on = scrollState.ecoEnter > 0.001 && scrollState.ecoExit < 0.999
+      if (on) {
+        const H = window.innerHeight
+        const at = ecoAt(scrollState.eco)
+        back.style.transform = `translateY(${((1 - scrollState.ecoEnter) - scrollState.ecoExit) * H}px)`
+        const layers = Array.from(back.children) as HTMLElement[]
+        const words = layers.pop()!
+        layers.forEach((tint, k) => (tint.style.clipPath = `inset(0 0 0 ${Math.min(1, Math.max(0, k - at)) * 100}%)`))
+        words.style.transform = `translateX(${-at * window.innerWidth}px)`
+      }
+      back.style.visibility = on ? '' : 'hidden'
+    }
+    // light theme so far: hero through ecosystem; the faq is still on the old theme's ink,
     // so turn as the two sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.ecoEnter)
-    el.style.backgroundColor = `#${mixed.copy(INK).lerp(PAPER, paper).lerp(WHITE, white).getHexString()}`
+    const white = 1 - smoothstep(0.3, 0.7, scrollState.ecoExit)
+    el.style.backgroundColor = `#${mixed.copy(INK).lerp(WHITE, white).getHexString()}`
   })
   return null
 }

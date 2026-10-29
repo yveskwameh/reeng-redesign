@@ -1,13 +1,16 @@
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
+import { ModeCopy, Pulse, ResultCard } from '../components/ecosystem'
 import { modes } from '../content/ecosystem'
-import { scrollToY } from '../lib/useSmoothScroll'
 import { trackSection } from '../lib/trackSection'
-import { ecoMode, ecoModeMid } from '../scene/scrollState'
+import { anchors, ecoMode } from '../scene/scrollState'
 
 /**
- * Pinned for three screens on paper. The ring switches mode (Pay → ID → Events);
- * EcoCard flips to what a tap opens in each. Mode tabs jump to their segment.
+ * One ring, three modes (after Zipline's huge mark behind the product, and the hero's REENG).
+ * Pinned for three screens: the mode's name fills the screen behind the ring and slides over
+ * to the next as you scroll, while a tint wipes across in the new mode's colour (both drawn
+ * under the canvas, see Scene.tsx and Backdrop.tsx). The ring (RingRig) sits in the slot and
+ * taps toward the card showing what it opens.
  */
 export function Ecosystem() {
   const section = useRef<HTMLElement>(null)
@@ -20,50 +23,26 @@ export function Ecosystem() {
     { scope: section },
   )
 
-  const jump = (i: number) => {
-    const el = section.current
-    if (el) scrollToY(el.offsetTop + ecoModeMid(i) * (el.offsetHeight - window.innerHeight))
-  }
   const mode = modes[active]
 
   return (
-    <section ref={section} id="ecosystem" className="relative h-[300svh] text-ink">
-      <div className="sticky top-0 flex h-svh items-start px-6 pt-32 md:items-center md:pt-0">
-        <div className="mx-auto w-full max-w-6xl">
-          <div className="max-w-md">
-            <h2 className="display mt-4 text-5xl md:text-7xl">One ring. More taps.</h2>
-
-            <div role="tablist" aria-label="Ring modes" className="mt-8 inline-flex rounded-full border border-ink/10 bg-white/60 p-1 md:mt-10">
-              {modes.map((m, i) => (
-                <button
-                  key={m.id}
-                  role="tab"
-                  type="button"
-                  aria-selected={i === active}
-                  onClick={() => jump(i)}
-                  className={`cursor-pointer rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
-                    i === active ? 'text-white' : 'text-ink/50 hover:text-ink'
-                  }`}
-                  style={i === active ? { background: m.text } : undefined}
-                >
-                  {m.name}
-                </button>
-              ))}
-            </div>
-
-            <div key={mode.id} role="tabpanel" className="mt-6 animate-[fade-up_0.4s_ease-out]">
-              <p className="label-mono" style={{ color: mode.text }}>
-                {mode.product}
-              </p>
-              <p className="mt-2 text-lg text-ink/70">{mode.body}</p>
-              {mode.href ? (
-                <a href={mode.href} target="_blank" rel="noreferrer" className="label-mono mt-4 inline-block underline underline-offset-4" style={{ color: mode.text }}>
-                  Visit {mode.product} ↗
-                </a>
-              ) : (
-                <p className="label-mono mt-4 text-ink/40">You’re here</p>
-              )}
-            </div>
+    <section ref={section} id="ecosystem" className="relative h-[300svh]">
+      <div className="sticky top-0 h-svh overflow-hidden">
+        <div className="relative mx-auto flex h-full max-w-7xl flex-col px-5 pb-6 pt-24 md:px-8 md:pb-10 md:pt-28">
+          <h2 className="display text-4xl text-ink md:text-6xl">
+            One ring.
+            <br />
+            More taps.
+          </h2>
+          <div
+            ref={(el) => void (anchors.ecoSlot = el)}
+            aria-hidden
+            className="absolute left-1/2 top-1/2 h-[32svh] w-[32svh] -translate-x-1/2 -translate-y-1/2 max-md:top-[44%]"
+          />
+          <Pulse id={mode.id} color={mode.text} className="left-1/2 top-1/2 max-md:top-[44%]" />
+          <div className="mt-auto flex items-end justify-between gap-6">
+            <ModeCopy mode={mode} className="max-w-xs" />
+            <ResultCard key={mode.id} mode={mode} className="w-72 shrink-0 animate-[fade-up_0.4s_ease-out] max-md:hidden" />
           </div>
         </div>
       </div>

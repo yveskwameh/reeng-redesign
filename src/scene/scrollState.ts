@@ -1,4 +1,4 @@
-import type { Object3D } from 'three'
+import { MathUtils, type Object3D } from 'three'
 
 // Shared, mutable scroll progress (0–1). Sections write it from ScrollTrigger;
 // the 3D scene reads it every frame. Plain object on purpose: no React re-renders.
@@ -61,6 +61,15 @@ export const scrollState = {
 export const ECO_MODES = 3
 export const ecoMode = (p: number) => Math.min(ECO_MODES - 1, Math.floor(p * ECO_MODES))
 export const ecoModeMid = (i: number) => (i + 0.5) / ECO_MODES
+/** How far through the current mode (0–1). */
+export const ecoLocal = (p: number) => MathUtils.clamp(p * ECO_MODES - ecoMode(p), 0, 1)
+/** Where the giant words and the tint wipe are, continuous: they move on at the end of each mode. */
+export const ecoAt = (p: number) => {
+  const i = ecoMode(p)
+  return i + (i < ECO_MODES - 1 ? smoothstep(0.8, 1, ecoLocal(p)) : 0)
+}
+/** The ring's tap in each mode: it dips toward the card and back early in the mode. */
+export const ecoTap = (p: number) => Math.sin(Math.PI * MathUtils.clamp((ecoLocal(p) - 0.12) / 0.3, 0, 1))
 
 /** The configurator's current choice, mirrored here so the 3D ring can follow it. */
 export const config = { finish: '#050506', size: 9, heroFinish: '#050506' }
@@ -98,11 +107,15 @@ export const anchors: {
   specWater: HTMLElement | null
   orderStage: HTMLElement | null
   orderCard: HTMLElement | null
+  ecoSlot: HTMLElement | null
+  ecoBack: HTMLElement | null
 } = {
   tapWords: null, // tap to pay's sliding place names under the canvas, moved by Backdrop
   specWater: null, // the specs water under the canvas, raised by Backdrop
   orderStage: null, // the configurator's stage card (DOM), which the ring is posed over
   orderCard: null, // that card's fill under the canvas, kept on it by Backdrop
+  ecoSlot: null, // ecosystem: the spot (DOM) the ring sits in
+  ecoBack: null, // ecosystem: the mode tints and giant words under the canvas, moved by Backdrop
   heroWord: null, // the giant REENG under the canvas, moved by Backdrop
   heroDial: null, // the hero's degree readout, written by RingRig
   compareSlots: [], // compare table header cells the small 3D models sit behind
