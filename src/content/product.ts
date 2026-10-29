@@ -7,7 +7,7 @@ export const product = {
   summary:
     'A non-custodial stablecoin wallet you wear. Tap to pay anywhere contactless cards are accepted.',
 
-  price: { regular: 199, earlyBird: 149, currency: 'USD' }, // assumed
+  price: { regular: 20, earlyBird: 15, currency: 'USD' }, // confirmed by the client
   finishes: [
     { id: 'onyx', name: 'Onyx Black', color: '#050506', available: true },
     { id: 'graphite', name: 'Graphite', color: '#3a3b40', available: false }, // assumed

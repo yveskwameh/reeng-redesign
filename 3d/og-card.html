@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  The Open Graph share card (public/og.png), 1200×630. Re-render after editing:
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
+    --force-device-scale-factor=1 --window-size=1200,630 --virtual-time-budget=4000 \
+    --screenshot=public/og.png "file://$PWD/3d/og-card.html"
+  The ring comes from 3d/render_og.py (3d/previews/og_ring.png).
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Unbounded';
+        src: url('../node_modules/@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2') format('woff2');
+        font-weight: 200 900;
+      }
+      @font-face {
+        font-family: 'Geist';
+        src: url('../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Geist Mono';
+        src: url('../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        font-family: 'Geist', sans-serif;
+        color: #0a0a0f;
+      }
+      /* the hero's giant pale wordmark, behind everything */
+      .word {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -46%);
+        font-family: 'Unbounded', sans-serif;
+        font-weight: 700;
+        font-size: 330px;
+        letter-spacing: -0.06em;
+        line-height: 1;
+        color: #f1f0f4;
+        white-space: nowrap;
+      }
+      .copy {
+        position: absolute;
+        left: 72px;
+        top: 72px;
+        bottom: 72px;
+        width: 560px;
+        display: flex;
+        flex-direction: column;
+      }
+      .logo {
+        height: 44px;
+        width: auto;
+        align-self: flex-start;
+      }
+      h1 {
+        margin-top: auto;
+        font-family: 'Unbounded', sans-serif;
+        font-weight: 700;
+        font-size: 64px;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+      }
+      p {
+        margin-top: 22px;
+        font-size: 25px;
+        line-height: 1.35;
+        color: #5f5f6c;
+        max-width: 470px;
+      }
+      .url {
+        margin-top: 30px;
+        font-family: 'Geist Mono', monospace;
+        font-size: 18px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9730f6;
+      }
+      /* the ring, floating over its soft shadow */
+      .shadow {
+        position: absolute;
+        right: 150px;
+        bottom: 66px;
+        width: 330px;
+        height: 46px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(10, 10, 15, 0.28), rgba(10, 10, 15, 0));
+      }
+      .ring {
+        position: absolute;
+        right: -10px;
+        top: 50%;
+        width: 640px;
+        height: 640px;
+        transform: translateY(-53%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="word">REENG</div>
+      <div class="shadow"></div>
+      <img class="ring" src="previews/og_ring.png" alt="" />
+      <div class="copy">
+        <img class="logo" src="../public/images/reeng_logo_full.png" alt="Reeng" />
+        <h1>Your wallet,<br />on your finger.</h1>
+        <p>A smart ring for stablecoins. Tap to pay anywhere contactless works.</p>
+        <div class="url">reeng-redesign.vercel.app</div>
+      </div>
+    </div>
+  </body>
+</html>

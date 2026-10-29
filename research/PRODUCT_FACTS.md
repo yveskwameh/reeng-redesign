@@ -9,8 +9,8 @@ When we set up the project, this table becomes one file (`src/content/product.ts
 |---|---|---|
 | Name | Reeng | Confirmed |
 | What it is | Wearable, non-custodial stablecoin wallet on Base | Confirmed |
-| Price | **$199** | Assumed (Tangem Ring is about $160; payment rings sell for $150–300) |
-| Launch / early-bird price | **$149** for the first batch | Assumed |
+| Price | **$20** | Confirmed by the client |
+| Launch / early-bird price | **$15** for the first batch | Confirmed by the client |
 | Finishes | **Onyx Black** (launch). Graphite and Pearl White are listed as "coming soon" | Assumed (black is the only finish shown) |
 | Shell material | Zirconia ceramic, high-gloss | Assumed (matches the photos) |
 | Inner liner | Medical-grade resin with "reeng" engraved inside | Assumed (the liner and engraving are visible in the renders) |
