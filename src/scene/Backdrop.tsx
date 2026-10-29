@@ -47,11 +47,22 @@ export function Backdrop() {
       words.style.opacity = `${smoothstep(0.4, 1, scrollState.tapEnter)}`
       words.style.visibility = scrollState.tapEnter > 0.01 && scrollState.tapExit < 0.999 ? '' : 'hidden'
     }
+    // order: the stage card's fill follows its DOM card
+    const card = anchors.orderCard
+    const stage = anchors.orderStage
+    if (card && stage) {
+      const on = scrollState.orderEnter > 0.001 && scrollState.orderExit < 0.999
+      if (on) {
+        const r = stage.getBoundingClientRect()
+        Object.assign(card.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` })
+      }
+      card.style.visibility = on ? '' : 'hidden'
+    }
     const eco = smoothstep(0.05, 0.5, scrollState.ecoEnter) * (1 - smoothstep(0.1, 0.6, scrollState.ecoExit))
     const paper = eco
-    // light theme so far: hero through specs; order is still dark, so turn as the two
+    // light theme so far: hero through order; compare is still dark, so turn as the two
     // sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.orderEnter)
+    const white = 1 - smoothstep(0.3, 0.7, scrollState.orderExit)
     el.style.backgroundColor = `#${mixed.copy(INK).lerp(PAPER, paper).lerp(WHITE, white).getHexString()}`
   })
   return null
