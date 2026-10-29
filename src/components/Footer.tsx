@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { Link } from 'react-router'
 import { reveal } from '../lib/reveal'
 import { modes } from '../content/ecosystem'
+import { SUPPORT_EMAIL } from '../content/legal'
 import { product } from '../content/product'
 
 export const year = new Date().getFullYear()
@@ -119,7 +120,12 @@ export function Footer() {
         </div>
         <div data-reveal className="mt-12 flex flex-col gap-10 border-t border-white/10 pt-10 md:flex-row md:justify-between">
           <Columns dark className="md:min-w-[32rem]" />
-          <Social dark />
+          <div className="flex flex-col gap-4 md:items-end">
+            <Social dark />
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-white/85 transition hover:text-white">
+              {SUPPORT_EMAIL}
+            </a>
+          </div>
         </div>
         <div className="mt-12 flex flex-col gap-4 text-sm text-white/45 md:flex-row md:justify-between">
           <p className="max-w-3xl">{DISCLAIMER}</p>
