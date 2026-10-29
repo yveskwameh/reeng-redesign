@@ -40,7 +40,7 @@ export function Ecosystem() {
             className="absolute left-1/2 top-1/2 h-[32svh] w-[32svh] -translate-x-1/2 -translate-y-1/2 max-md:top-[44%]"
           />
           <Pulse id={mode.id} color={mode.text} className="left-1/2 top-1/2 max-md:top-[44%]" />
-          <div className="mt-auto flex items-end justify-between gap-6">
+          <div data-reveal className="mt-auto flex items-end justify-between gap-6">
             <ModeCopy mode={mode} className="max-w-xs" />
             <ResultCard key={mode.id} mode={mode} className="w-72 shrink-0 animate-[fade-up_0.4s_ease-out] max-md:hidden" />
           </div>

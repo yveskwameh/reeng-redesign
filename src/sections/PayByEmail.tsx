@@ -47,7 +47,7 @@ export function PayByEmail() {
             <p className="mt-4 max-w-md text-lg text-ash">Send stablecoins to any inbox. Receive on a one-time alias that disappears after use.</p>
 
             {/* the address field */}
-            <div className="mt-8 flex items-center gap-3 rounded-full bg-white py-3 pl-5 pr-3 shadow-lg shadow-ink/5 ring-1 ring-line md:mt-10 md:py-4">
+            <div data-reveal className="mt-8 flex items-center gap-3 rounded-full bg-white py-3 pl-5 pr-3 shadow-lg shadow-ink/5 ring-1 ring-line md:mt-10 md:py-4">
               <span className="label-mono shrink-0 text-ash">To</span>
               <span className="min-w-0 flex-1 truncate font-display text-lg md:text-2xl">
                 {next ? (

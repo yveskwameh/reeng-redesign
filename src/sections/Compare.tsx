@@ -58,7 +58,7 @@ export function Compare() {
           </div>
 
           {/* the bars */}
-          <div role="table" aria-label="How many of the eight features each option has" className="grid min-h-0 grid-cols-4 items-end gap-2 md:gap-4">
+          <div data-reveal role="table" aria-label="How many of the eight features each option has" className="grid min-h-0 grid-cols-4 items-end gap-2 md:gap-4">
             {compareColumns.map((c, i) => {
               const s = tally(i)
               const m = compareRows[at].marks[i]

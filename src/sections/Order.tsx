@@ -48,7 +48,7 @@ export function Order() {
           </div>
 
           {/* the panel */}
-          <div className="flex min-h-0 flex-col rounded-3xl bg-white ring-1 ring-line max-md:max-h-[64svh]">
+          <div data-reveal className="flex min-h-0 flex-col rounded-3xl bg-white ring-1 ring-line max-md:max-h-[64svh]">
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 md:p-6">
               <Step n={1} title="Finish" value={o.finish.name}>
                 {/* rows on wide screens; three compact tiles on phones */}
