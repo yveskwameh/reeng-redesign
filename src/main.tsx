@@ -25,6 +25,10 @@ const router = createBrowserRouter([
     lazy: async () => ({ Component: (await import('./section-options/order/OrderOptions.tsx')).OrderOptions }),
   },
   {
+    path: 'options/compare',
+    lazy: async () => ({ Component: (await import('./section-options/compare/CompareOptions.tsx')).CompareOptions }),
+  },
+  {
     path: 'options/specs',
     lazy: async () => ({ Component: (await import('./section-options/specs/SpecsOptions.tsx')).SpecsOptions }),
   },

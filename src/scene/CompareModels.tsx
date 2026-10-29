@@ -6,7 +6,7 @@ import { Ring } from './Ring'
 import { anchors } from './scrollState'
 
 // rough bounding radius of each model at scale 1, so they all fill their slot alike
-const RADIUS = [1.2, 0.5, 0.56, 1.15]
+export const RADIUS = [1.2, 0.5, 0.56, 1.15]
 
 /**
  * Small rotating models behind the compare table's header cells: Reeng, a bank card,
@@ -30,7 +30,7 @@ export function CompareModels() {
       const cx = r.left + r.width / 2
       const cy = r.top + r.height / 2
       g.position.set((cx / window.innerWidth - 0.5) * vw, (0.5 - cy / window.innerHeight) * vh, 0)
-      const fit = (Math.min(r.width, r.height) * 0.42 * pxToWorld) / RADIUS[i]
+      const fit = (Math.min(r.width, r.height) * 0.36 * pxToWorld) / RADIUS[i]
       g.scale.setScalar(fit)
       // rings spin; flat things (card, phone) sway so their face stays readable
       const flat = i === 1 || i === 2
@@ -42,15 +42,26 @@ export function CompareModels() {
 
   return (
     <>
-      {/* Reeng: the real model */}
-      <group ref={set(0)} visible={false}>
-        <group rotation={[0.9, 0, 0]}>
-          <Ring />
+      {[0, 1, 2, 3].map((i) => (
+        <group key={i} ref={set(i)} visible={false}>
+          <CompareModelMesh i={i} />
         </group>
-      </group>
+      ))}
+    </>
+  )
+}
 
-      {/* bank card with chip */}
-      <group ref={set(1)} visible={false}>
+/** One of the compare models at scale 1: 0 Reeng, 1 bank card, 2 phone wallet, 3 another smart ring. */
+export function CompareModelMesh({ i }: { i: number }) {
+  if (i === 0)
+    return (
+      <group rotation={[0.9, 0, 0]}>
+        <Ring />
+      </group>
+    )
+  if (i === 1)
+    return (
+      <>
         <RoundedBox args={[0.856, 0.54, 0.012]} radius={0.004} smoothness={2}>
           <meshPhysicalMaterial color="#A9A9B6" metalness={0.7} roughness={0.3} clearcoat={0.6} />
         </RoundedBox>
@@ -58,10 +69,11 @@ export function CompareModels() {
           <boxGeometry args={[0.12, 0.09, 0.006]} />
           <meshStandardMaterial color="#D4B25A" metalness={1} roughness={0.3} />
         </mesh>
-      </group>
-
-      {/* phone */}
-      <group ref={set(2)} visible={false}>
+      </>
+    )
+  if (i === 2)
+    return (
+      <>
         <RoundedBox args={[0.5, 1.02, 0.05]} radius={0.06} smoothness={4}>
           <meshPhysicalMaterial color="#16161c" metalness={0.6} roughness={0.25} clearcoat={1} />
         </RoundedBox>
@@ -74,14 +86,10 @@ export function CompareModels() {
           <planeGeometry args={[0.32, 0.08]} />
           <meshBasicMaterial color="#B57BFF" toneMapped={false} />
         </mesh>
-      </group>
-
-      {/* generic smart ring: wider, brushed titanium */}
-      <group ref={set(3)} visible={false}>
-        <OtherRing />
-      </group>
-    </>
-  )
+      </>
+    )
+  // generic smart ring: wider, brushed titanium
+  return <OtherRing />
 }
 
 function OtherRing() {
