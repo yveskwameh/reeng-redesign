@@ -2,6 +2,7 @@ import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
 import { QA } from '../components/faq'
 import { faq, faqTopics } from '../content/faq'
+import { SUPPORT_EMAIL } from '../content/legal'
 import { trackSection } from '../lib/trackSection'
 import { scrollToY } from '../lib/useSmoothScroll'
 import { anchors, faqTopic, faqTopicMid } from '../scene/scrollState'
@@ -74,6 +75,12 @@ export function Faq() {
             <div className="mt-6 h-0.5 w-full overflow-hidden rounded-full bg-mist max-md:hidden">
               <div className="h-full bg-violet" style={{ width: `${p * 100}%` }} />
             </div>
+            <p className="mt-4 text-sm text-ash md:mt-5 md:text-base">
+              Still have questions?{' '}
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-violet underline underline-offset-4">
+                Ask us
+              </a>
+            </p>
           </div>
           <ul key={topic} aria-label={topic} className="min-h-0 animate-[fade-up_0.4s_ease-out] border-t border-line md:mt-4 md:min-h-[26rem]">
             {items.map((f) => (

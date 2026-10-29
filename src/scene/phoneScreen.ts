@@ -1,5 +1,3 @@
-import { CanvasTexture, SRGBColorSpace } from 'three'
-
 const W = 600
 const H = 1280
 
@@ -37,9 +35,6 @@ export function createPhoneScreen() {
   canvas.width = W
   canvas.height = H
   const ctx = canvas.getContext('2d')!
-  const texture = new CanvasTexture(canvas)
-  texture.colorSpace = SRGBColorSpace
-  texture.anisotropy = 4
   let last: PhoneView = { step: 'pair', paired: false }
 
   const text = (s: string, x: number, y: number, font: string, color: string, align: CanvasTextAlign = 'left') => {
@@ -143,11 +138,10 @@ export function createPhoneScreen() {
       pill(52, H - 170, W - 104, 96, C.lime)
       text('Ready to tap', W / 2, H - 108, `500 30px ${SANS}`, C.ink, 'center')
     }
-    texture.needsUpdate = true
   }
 
   draw(last)
   document.fonts.ready.then(() => draw(last))
 
-  return { texture, draw }
+  return { canvas, draw }
 }

@@ -62,7 +62,7 @@ export const faq: { topic: FaqTopic; q: string; a: string }[] = [
   {
     topic: 'Hardware',
     q: 'Does it need charging?',
-    a: `Never. ${specs.battery}. The ring is powered by the terminal’s field when you tap.`,
+    a: 'No, never. There’s no battery inside: the terminal’s own field powers the ring for the moment you tap.',
   },
   {
     topic: 'Hardware',

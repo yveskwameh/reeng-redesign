@@ -45,7 +45,7 @@ function downPath(w: number, h: number) {
 function phoneShot(v: PhoneView) {
   const s = createPhoneScreen()
   s.draw(v)
-  return (s.texture.image as HTMLCanvasElement).toDataURL()
+  return s.canvas.toDataURL()
 }
 
 /**
