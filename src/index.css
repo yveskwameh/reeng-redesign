@@ -33,6 +33,13 @@
 }
 
 /* content swaps (e.g. spec chips changing act) */
+/* a wave path two periods wide slides by one period: the specs waterline */
+@keyframes wave {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;

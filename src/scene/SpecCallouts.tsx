@@ -1,7 +1,7 @@
 import { Line } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
-import type { Group, Mesh, MeshBasicMaterial } from 'three'
+import { useMemo, useRef, type RefObject } from 'react'
+import type { Group, Mesh, MeshBasicMaterial, Object3D } from 'three'
 import { product } from '../content/product'
 import { innerDiameter } from '../content/sizing'
 import { labelTexture } from './labelTexture'
@@ -23,8 +23,10 @@ type LineMat = { opacity: number }
  * Technical-drawing callouts around the ring for the precision act. They live in a
  * group that follows the ring's position and scale but not its rotation, so the
  * lines stay square to the screen while the ring turns from face-on to profile.
+ * On the page it follows scrollState.spec and the main ring; review pages pass `progress`,
+ * their own `ring` and whether to show the thickness `leader`.
  */
-export function SpecCallouts() {
+export function SpecCallouts({ progress, ring: ringRef, leader: leaderOn }: { progress?: RefObject<number>; ring?: RefObject<Object3D | null>; leader?: boolean } = {}) {
   const group = useRef<Group>(null)
   const front = useRef<Group>(null)
   const leader = useRef<Group>(null)
@@ -41,13 +43,13 @@ export function SpecCallouts() {
 
   useFrame((state) => {
     const g = group.current
-    const ring = anchors.ring
+    const ring = ringRef ? ringRef.current : anchors.ring
     if (!g || !ring) return
-    if (leader.current) leader.current.visible = layout(state.viewport.width, state.viewport.height).spec.leader
+    if (leader.current) leader.current.visible = leaderOn ?? layout(state.viewport.width, state.viewport.height).spec.leader
     g.position.copy(ring.position)
     g.scale.copy(ring.scale)
-    const p = scrollState.spec
-    const on = scrollState.specEnter > 0.95 && scrollState.specExit < 0.01
+    const p = progress ? progress.current : scrollState.spec
+    const on = progress ? true : scrollState.specEnter > 0.95 && scrollState.specExit < 0.01
     const f = on ? smoothstep(SPEC.front[0], SPEC.front[0] + 0.04, p) * (1 - smoothstep(SPEC.front[1] - 0.04, SPEC.front[1], p)) : 0
     const s = on ? smoothstep(SPEC.side[0], SPEC.side[0] + 0.04, p) * (1 - smoothstep(SPEC.side[1] - 0.03, SPEC.side[1] + 0.01, p)) : 0
     fade(front.current, f)

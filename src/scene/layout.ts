@@ -1,4 +1,5 @@
 import { Vector3 } from 'three'
+import { SPEC_WATER, specWaterline } from './scrollState'
 
 /**
  * Where things sit, in world units, for the current viewport.
@@ -27,10 +28,14 @@ export function layout(vw: number, vh: number) {
       : { envelope: new Vector3(-0.3, -1.6, 0), envScale: 0.55, ring: new Vector3(0.62, -1.45, 0), ringScale: 0.16 },
 
     // specs: big ring for the dimension callouts, then a water surface it drops through
-    spec: wide
-      ? { ring: new Vector3(vw * 0.17, 0.1, 0), ringScale: 0.72, surface: -0.35, dropScale: 0.45, waterX: vw * 0.17, lift: 1.3, sink: 0.8, leader: true }
-      : // narrow: smaller ring below the chips; no thickness leader (it would run off-screen; the chip says it)
-        { ring: new Vector3(0, -1.28, 0), ringScale: 0.32, surface: -1.05, dropScale: 0.28, waterX: 0, lift: 0.8, sink: 0.5, leader: false },
+    spec: {
+      // the 3D surface sits in the middle of the page's surface band, just above the waterline
+      surface: vh * (0.5 - specWaterline()) + (SPEC_WATER.band / 2) * (vh / window.innerHeight),
+      ...(wide
+        ? { ring: new Vector3(vw * 0.17, 0.05, 0), ringScale: 0.62, dropScale: 0.38, waterX: vw * 0.22, lift: 1.0, sink: 0.85, leader: true }
+        : // narrow: smaller ring under the copy, dropping in the middle; no thickness leader (it would run off-screen)
+          { ring: new Vector3(0, -0.6, 0), ringScale: 0.3, dropScale: 0.22, waterX: 0, lift: 0.6, sink: 0.35, leader: false }),
+    },
 
     // order: configurator ring on the right; on narrow screens it sits in a gap under the heading
     order: wide ? { ring: new Vector3(vw * 0.18, 0.05, 0), ringScale: 0.62 } : { ring: new Vector3(0, 0.25, 0), ringScale: 0.3 },
