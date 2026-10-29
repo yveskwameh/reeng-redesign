@@ -82,10 +82,3 @@ Everything a client might change lives in `src/content/`, not in the components:
 ```
 
 Then copy `3d/reeng_ring.glb` to `public/models/`. Its parts are named (Shell, Liner, Antenna, SecureChip) so the security section can move them separately.
-
-## Before launch
-
-- Confirm the values marked `// assumed` in `src/content/product.ts`: prices, IP68 rating, materials, size and weight, shipping times, upcoming finishes
-- Add the real revision dates to the legal pages (`src/content/legal.ts`); the live site only shows today's date
-- Connect Stripe on `/checkout`
-- Test on a real low-end phone (an older Android is the best test)
