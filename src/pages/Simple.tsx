@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { privacy, terms, type LegalSection } from '../content/legal'
 import { product } from '../content/product'
 
 /** The practical pages (checkout, legal, 404), on the home page's white with its type and pills. */
@@ -78,15 +79,55 @@ export const OrderSuccess = () => (
   </Page>
 )
 
+/** A legal document: numbered sections with paragraphs, lists and sub-headings. */
+function Legal({ sections }: { sections: LegalSection[] }) {
+  return (
+    <ol className="mt-4 space-y-12 text-base text-ash md:text-lg">
+      {sections.map((sec, i) => (
+        <li key={sec.title} className="border-t border-line pt-8">
+          <h2 className="flex gap-4 font-display text-xl font-bold text-ink md:text-2xl">
+            <span className="label-mono pt-1.5 text-violet">{String(i + 1).padStart(2, '0')}</span>
+            {sec.title}
+          </h2>
+          <div className="mt-4 space-y-4 md:pl-10">
+            {sec.blocks.map((b, k) =>
+              typeof b === 'string' ? (
+                <p key={k}>{b}</p>
+              ) : 'list' in b ? (
+                <ul key={k} className="list-disc space-y-1.5 pl-5 marker:text-violet">
+                  {b.list.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : 'sub' in b ? (
+                <h3 key={k} className="pt-2 font-medium text-ink">
+                  {b.sub}
+                </h3>
+              ) : (
+                <p key={k}>
+                  Email:{' '}
+                  <a href={`mailto:${b.email}`} className="text-violet underline underline-offset-4">
+                    {b.email}
+                  </a>
+                </p>
+              ),
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 export const Privacy = () => (
   <Page eyebrow="Legal" title="Privacy Policy">
-    <p>Content to be migrated from reeng.xyz/privacy-policy.</p>
+    <Legal sections={privacy} />
   </Page>
 )
 
 export const Terms = () => (
   <Page eyebrow="Legal" title="Terms of Service">
-    <p>Content to be migrated from reeng.xyz/terms-of-service.</p>
+    <Legal sections={terms} />
   </Page>
 )
 
