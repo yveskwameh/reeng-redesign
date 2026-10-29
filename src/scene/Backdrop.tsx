@@ -60,9 +60,9 @@ export function Backdrop() {
     }
     const eco = smoothstep(0.05, 0.5, scrollState.ecoEnter) * (1 - smoothstep(0.1, 0.6, scrollState.ecoExit))
     const paper = eco
-    // light theme so far: hero through order; compare is still dark, so turn as the two
-    // sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.orderExit)
+    // light theme so far: hero through compare; ecosystem is still on the old theme's paper,
+    // so turn as the two sections pass the middle of the screen
+    const white = 1 - smoothstep(0.3, 0.7, scrollState.ecoEnter)
     el.style.backgroundColor = `#${mixed.copy(INK).lerp(PAPER, paper).lerp(WHITE, white).getHexString()}`
   })
   return null
