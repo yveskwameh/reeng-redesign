@@ -6,16 +6,6 @@ export const coinEdge = new MeshStandardMaterial({ color: '#C9C9D6', metalness: 
 
 export type CoinFace = { ticker: string; chain: string; bg: string; fg: string }
 
-/** Stablecoins coming in (ticker colours approximate each issuer's brand). */
-export const COINS_IN: CoinFace[] = [
-  { ticker: 'USDT', chain: 'ETHEREUM', bg: '#26A17B', fg: '#FFFFFF' },
-  { ticker: 'cUSD', chain: 'CELO', bg: '#FCFF52', fg: '#0A0A0F' },
-  { ticker: 'USDC', chain: 'POLYGON', bg: '#2775CA', fg: '#FFFFFF' },
-  { ticker: 'USDT', chain: 'TRON', bg: '#26A17B', fg: '#FFFFFF' },
-  { ticker: 'cUSD', chain: 'CELO', bg: '#FCFF52', fg: '#0A0A0F' },
-  { ticker: 'USDC', chain: 'ARBITRUM', bg: '#2775CA', fg: '#FFFFFF' },
-]
-
 /** What every coin becomes after passing through the ring. */
 export const COIN_OUT: CoinFace = { ticker: 'USDC', chain: 'BASE', bg: '#2775CA', fg: '#FFFFFF' }
 

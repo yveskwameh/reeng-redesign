@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
+import { ScrollBar } from './components/ScrollBar'
 import { scrollToY, useSmoothScroll } from './lib/useSmoothScroll'
 
 // three.js + R3F are the bulk of the bundle; load them after the page shell
@@ -36,6 +37,7 @@ export default function App() {
       )}
       <Outlet />
       <Footer />
+      <ScrollBar />
     </>
   )
 }

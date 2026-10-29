@@ -3,13 +3,14 @@ import { Color, MathUtils, Mesh, type MeshStandardMaterial, type Object3D, type 
 import { modes } from '../content/ecosystem'
 import { anchors, config, ecoMode, MAIL, SEC, SECURITY, secFeature, scrollState, smoothstep } from './scrollState'
 
-const GLOW = new Color('#B57BFF')
+const GLOW = new Color('#9730F6')
 const CORAL = new Color('#FF5A4E')
 const COPPER = new Color('#F28C55')
 const LIME = new Color('#C8FF4D')
 const restPose = new WeakMap<Object3D, Vector3>()
 const baseColor = new WeakMap<Object3D, Color>()
 const finish = new Color()
+const heroFinish = new Color()
 const target = new Color()
 const modeGlow = new Color()
 
@@ -26,6 +27,7 @@ const OFFSETS: Record<string, [number, number, number]> = {
  * - security: parts separate along the ring's axis, and the part behind the active
  *   feature glows (all coral for revoke)
  * - pay by email: a lime flash as the coins land
+ * - hero: the shell takes the finish picked from the hero swatches
  * - order + final call to action: the shell takes the configurator's finish
  * - ecosystem: a faint glow in the active mode's colour
  */
@@ -49,6 +51,8 @@ export function RingFx() {
       smoothstep(0.3, 1, scrollState.ctaEnter), // the closing ring keeps your chosen finish
     )
     finish.set(config.finish)
+    heroFinish.set(config.heroFinish)
+    const heroOn = 1 - smoothstep(0, 0.6, scrollState.tapEnter)
 
     const ecoOn = smoothstep(0.5, 1, scrollState.ecoEnter) * (1 - smoothstep(0, 0.4, scrollState.ecoExit))
     modeGlow.set(modes[ecoMode(scrollState.eco)].glow)
@@ -58,7 +62,7 @@ export function RingFx() {
         const mat = part.material as MeshStandardMaterial
         let base = baseColor.get(part)
         if (!base) baseColor.set(part, (base = mat.color.clone()))
-        target.copy(base).lerp(finish, finishOn)
+        target.copy(base).lerp(heroFinish, heroOn).lerp(finish, finishOn)
         mat.color.lerp(target, 1 - Math.exp(-dt * 10))
       }
       // remember each part's assembled position the first time we see it
@@ -85,7 +89,7 @@ export function RingFx() {
           return
         }
         mat.emissive.copy(lit ? (revoke ? CORAL : GLOW) : COPPER)
-        mat.emissiveIntensity = MathUtils.damp(mat.emissiveIntensity, lit ? (revoke ? 0.18 : 0.45) : base, 8, dt)
+        mat.emissiveIntensity = MathUtils.damp(mat.emissiveIntensity, lit ? (revoke ? 0.25 : 0.55) : base, 8, dt)
       })
     }
   })

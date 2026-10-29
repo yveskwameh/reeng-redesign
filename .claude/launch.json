@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "reeng-web", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"], "port": 5173 }
+    { "name": "reeng-web", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5174", "--strictPort", "--host"], "port": 5174 }
   ]
 }

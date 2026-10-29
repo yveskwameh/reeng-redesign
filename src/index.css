@@ -17,6 +17,11 @@
   --color-steel: #8a8a99;
   --color-paper: #f5f4f0;
 
+  /* light site: white dominates, mist for cards/stages, ash for secondary text (AA on white) */
+  --color-mist: #f1f0f4;
+  --color-line: #e3e2e8;
+  --color-ash: #5f5f6c;
+
   /* brand — violet fills; violet-glow for text/icons on dark (violet fails AA there) */
   --color-violet: #9730f6;
   --color-violet-glow: #b57bff;
@@ -28,6 +33,18 @@
 }
 
 /* content swaps (e.g. spec chips changing act) */
+/* a wave path two periods wide slides by one period: the specs waterline */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes wave {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -56,9 +73,29 @@ html {
 }
 
 body {
-  @apply bg-ink font-sans text-paper antialiased;
+  @apply bg-white font-sans text-ink antialiased;
 }
 
 ::selection {
   @apply bg-violet text-white;
+}
+
+/* hero: contactless ripple from a tap */
+@keyframes ripple {
+  from {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* the page's own scrollbar (components/ScrollBar) replaces the native one */
+html.custom-scrollbar {
+  scrollbar-width: none;
+}
+html.custom-scrollbar::-webkit-scrollbar {
+  display: none;
 }
