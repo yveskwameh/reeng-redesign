@@ -19,7 +19,7 @@ export function layout(vw: number, vh: number) {
     hoverLift: 0.6 * s,
     hoverOffset: new Vector3(-0.85 * s, 0.05 * s, 0),
 
-    cross: wide ? crossBeside(vw) : { ring: new Vector3(0, 0.12, 0), ringScale: 0.34, exit: new Vector3(vw * 0.1, -vh * 0.3, 1.2) },
+    cross: wide ? crossBeside(vw) : { ring: new Vector3(0, 0.3, 0), ringScale: 0.3, exit: new Vector3(vw * 0.1, -vh * 0.3, 1.2) },
 
     // pay by email: envelope right of the address field, ring (the receiver) to its right;
     // phones: both under the copy
