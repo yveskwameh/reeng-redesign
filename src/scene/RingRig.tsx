@@ -294,18 +294,24 @@ export function RingRig() {
       scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 0.8 * state.viewport.height) / H / (2 * RING_RADIUS), faqOn)
     }
 
-    // final call to action: flies up from below into a hero-style closing pose (draggable again)
+    // final call to action: flies in from the right and drops into the gap for the O of "your",
+    // face-on; dragging spins it in place (it follows the slot out, so no exit shift)
     const cta = smoothstep(0.15, 1, scrollState.ctaEnter)
-    if (cta > 0) {
-      ctaPos.copy(L.cta.ring)
-      ctaPos.y += Math.sin(t * 1.2) * 0.04 - (1 - cta) * state.viewport.height * 0.6
-      spinQ.setFromAxisAngle(Y, d.spin)
-      ctaRot.copy(HERO_ROT).multiply(spinQ)
+    const ctaSlot = anchors.ctaSlot
+    if (cta > 0 && ctaSlot) {
+      const r = ctaSlot.getBoundingClientRect()
+      const { width: W, height: H } = state.size
+      const fly = 1 - smoothstep(0.25, 1, scrollState.ctaEnter)
+      const cx = r.left + r.width / 2 + fly * W * 0.6
+      const cy = r.top + r.height / 2 - fly * H * 0.3
+      ctaPos.set((cx / W - 0.5) * state.viewport.width, (0.5 - cy / H) * state.viewport.height, 0)
+      spinQ.setFromAxisAngle(Y, d.spin + fly * 3)
+      ctaRot.copy(FACE).multiply(spinQ)
       pos.lerp(ctaPos, cta)
       rot.slerp(ctaRot, cta)
-      scale = MathUtils.lerp(scale, L.cta.ringScale, cta)
+      // the ring is just wider than the gap, so it reads as a bold O
+      scale = MathUtils.lerp(scale, (Math.min(r.width, r.height) * 1.05 * state.viewport.height) / H / (2 * RING_RADIUS), cta)
     }
-    pos.y += scrollState.ctaExit * state.viewport.height
 
     // damp toward the target so scroll jumps never snap
     const k = 1 - Math.exp(-dt * 7)

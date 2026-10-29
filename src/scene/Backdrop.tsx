@@ -1,20 +1,12 @@
 import { useFrame } from '@react-three/fiber'
-import { Color } from 'three'
 import { anchors, ecoAt, SPEC, SPEC_WATER, scrollState, smoothstep, specRise, specWaterline, TAP, tapPlace } from './scrollState'
 
-const INK = new Color('#0A0A0F')
-const WHITE = new Color('#FFFFFF')
-const mixed = new Color()
-
 /**
- * Colours the canvas backdrop per section (an opaque section background would hide the
- * canvas): white for the sections already moved to the light theme (hero → faq),
- * then ink for the rest of the old dark theme.
+ * Moves the DOM layers that sit under the canvas (an opaque section background would hide
+ * the ring), keeping each one with its section.
  */
 export function Backdrop() {
   useFrame(() => {
-    const el = anchors.backdrop
-    if (!el) return
     // hero wordmark: letters drift apart as the ring turns face-on, then it leaves with the hero
     const word = anchors.heroWord
     if (word) {
@@ -72,10 +64,6 @@ export function Backdrop() {
       }
       back.style.visibility = on ? '' : 'hidden'
     }
-    // light theme so far: hero through faq; the final call to action is still on the old
-    // theme's ink, so turn as the two sections pass the middle of the screen
-    const white = 1 - smoothstep(0.3, 0.7, scrollState.faqExit)
-    el.style.backgroundColor = `#${mixed.copy(INK).lerp(WHITE, white).getHexString()}`
   })
   return null
 }

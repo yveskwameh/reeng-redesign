@@ -24,7 +24,7 @@ import { Terminal } from './Terminal'
  */
 export function Scene() {
   return (
-    <div ref={(el) => void (anchors.backdrop = el)} className="pointer-events-none fixed inset-0 z-0">
+    <div className="pointer-events-none fixed inset-0 z-0 bg-white">
       {/* hero wordmark: under the transparent canvas so the ring floats in front of it */}
       <div
         ref={(el) => void (anchors.heroWord = el)}

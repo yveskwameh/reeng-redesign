@@ -36,10 +36,6 @@ export function layout(vw: number, vh: number) {
         : // narrow: smaller ring under the copy, dropping in the middle; no thickness leader (it would run off-screen)
           { ring: new Vector3(0, -0.6, 0), ringScale: 0.3, dropScale: 0.22, waterX: 0, lift: 0.6, sink: 0.35, leader: false }),
     },
-
-
-    // final call to action: the ring back centre stage, above the closing headline
-    cta: { ring: new Vector3(0, wide ? 1.05 : 1.0, 0), ringScale: wide ? 0.58 : 0.34 },
   }
 }
 
