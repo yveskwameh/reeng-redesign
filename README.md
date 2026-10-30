@@ -13,6 +13,8 @@ https://github.com/user-attachments/assets/39a21e05-d6b5-402f-a203-7839e5bf6009
 
 Reeng is a smart ring that works as a stablecoin wallet. You tap it to pay anywhere contactless works, receive money from any chain, and keep control of your own keys. I rebuilt its website around a real 3D model of the ring that you scroll through, so every feature is shown happening instead of being described. I also made sure it runs well on an ordinary phone, not only on my laptop.
 
+https://github.com/user-attachments/assets/39a21e05-d6b5-402f-a203-7839e5bf6009
+
 ## The problem
 
 Before designing anything, I went through every page of reeng.xyz and wrote down what I found (`research/RESEARCH.md`). Three things stood out.
