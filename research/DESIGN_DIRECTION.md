@@ -1,8 +1,8 @@
 # Design direction and ring sizing
 
-## 1. The client's sizing document
+## 1. Reeng's sizing document
 
-`research/ring-sizing-A4.pdf` (preview: `ring-sizing-A4-preview.png`) is a one-page **printable ring sizer**, branded **reeng.id** (the sister networking-ring product). It contains:
+Reeng sizes rings with a one-page **printable ring sizer**, branded **reeng.id** (the sister networking-ring product). It contains:
 
 1. **Calibration bar:** "Print at 100%, turn off Fit to page." A bar 85.6 mm wide must match the width of any bank card. That proves the printout is to scale.
 2. **Cut-out strip:** a paper strip with an arrow tab and a scale marked **US 4–13**.
@@ -40,7 +40,7 @@ Each step is shown with a photoreal render: a card on the printout, scissors, th
 - The sizing rule as a hint under the picker: "Between two? Pick the larger one."
 - A size chart (the table above), folded away behind "See all sizes".
 
-**Needed from the client:** the source file of the A4 sizer (Figma, Illustrator, etc.) so we can rebrand it from reeng.id to Reeng. Otherwise we rebuild it ourselves as a print-accurate PDF or SVG.
+**Needed from Reeng:** the source file of the A4 sizer (Figma, Illustrator, etc.) so we can rebrand it from reeng.id to Reeng. Otherwise we rebuild it ourselves as a print-accurate PDF or SVG.
 
 ---
 
@@ -120,4 +120,4 @@ The section list in `RESEARCH.md` §4 stays as it is. The change is that each se
 
 1. **Typography:** A (Unbounded / Geist), B (keep Bricolage for headlines), or C (Clash / Satoshi)?
 2. **Palette:** approve "Precision Noir" (dark base, violet primary, lime used only for success)?
-3. **Sizer:** can the client send the source file, or should we rebuild it from scratch?
+3. **Sizer:** can Reeng send the source file, or should we rebuild it from scratch?

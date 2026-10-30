@@ -20,7 +20,7 @@ const pill = 'inline-flex items-center justify-center rounded-full px-7 py-3.5 f
 const primary = `${pill} bg-violet text-white hover:bg-ink`
 const secondary = `${pill} bg-mist text-ink hover:bg-line`
 
-// Stripe Embedded Checkout mounts here once the client's Stripe account
+// Stripe Embedded Checkout mounts here once the brand's Stripe account
 // and the session endpoint exist (research/PRODUCT_FACTS.md → Checkout plan).
 export function Checkout() {
   const [params] = useSearchParams()

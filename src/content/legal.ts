@@ -1,6 +1,6 @@
 // The Privacy Policy and Terms of Service, migrated word for word from reeng.xyz
 // (/privacy-policy and /terms-of-service, October 2026). The live pages show today's date as
-// "Last updated", so no real revision date came across: add one here when the client confirms it.
+// "Last updated", so no real revision date came across: add one here when Reeng confirms it.
 
 /** A block of a legal section: a paragraph, a bulleted list, a small sub-heading, or an email line. */
 export type Block = string | { list: string[] } | { sub: string } | { email: string }

@@ -15,7 +15,7 @@ export const circumference = (us: number) => innerDiameter(us) * Math.PI
 
 /**
  * Nearest US size for a measured inner diameter. Between two sizes, pick the larger
- * one (the client's sizer rule) — so anything past a quarter-size rounds up.
+ * one (Reeng's sizer rule) — so anything past a quarter-size rounds up.
  */
 export function sizeFromDiameter(mm: number, sizes: readonly number[]) {
   const exact = (mm - 11.63) / 0.8128

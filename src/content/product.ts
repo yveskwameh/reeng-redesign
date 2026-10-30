@@ -1,5 +1,5 @@
 // Single source for product facts. Values marked `assumed` are placeholders
-// (see research/PRODUCT_FACTS.md) — change them here when the client confirms.
+// (see research/PRODUCT_FACTS.md) — change them here when Reeng confirms.
 
 export const product = {
   name: 'Reeng',
@@ -7,13 +7,13 @@ export const product = {
   summary:
     'A non-custodial stablecoin wallet you wear. Tap to pay anywhere contactless cards are accepted.',
 
-  price: { regular: 20, earlyBird: 15, currency: 'USD' }, // confirmed by the client
+  price: { regular: 20, earlyBird: 15, currency: 'USD' }, // confirmed by Reeng
   finishes: [
     { id: 'onyx', name: 'Onyx Black', color: '#050506', available: true },
     { id: 'graphite', name: 'Graphite', color: '#3a3b40', available: false }, // assumed
     { id: 'pearl', name: 'Pearl White', color: '#ecebef', available: false }, // assumed
   ],
-  sizes: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // US, from the client's printable sizer
+  sizes: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13], // US, from Reeng's printable sizer
 
   specs: {
     shell: 'Zirconia ceramic, high-gloss', // assumed

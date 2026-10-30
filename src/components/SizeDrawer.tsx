@@ -25,7 +25,7 @@ type Props = {
 
 /**
  * "Find your size": measure on screen (calibrate with a bank card, then match a ring
- * you own), print the client's A4 sizer, or get a free sizing kit. Plus a size chart.
+ * you own), print Reeng's A4 sizer, or get a free sizing kit. Plus a size chart.
  * Right-hand drawer on desktop, bottom sheet on phones.
  */
 export function SizeDrawer({ open, onClose, onPick, kit, onKit }: Props) {
