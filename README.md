@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/39a21e05-d6b5-402f-a203-7839e5bf6009
-
 # Reeng redesign
 
 ![The Reeng share card: the black ring beside the words "Your wallet, on your finger."](public/og.png)
